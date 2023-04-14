@@ -9,19 +9,6 @@ def obj_func2(x):
 
 # MOTLBO class
 class MOTLBO:
-    def pop_print(self):
-        print(self.pop)
-        
-    def finis_print(self):
-        print(self.fitness1)
-        print
-        print(self.fitness2)
-
-    def teaching_print(self):
-        print(self.teacher1)
-        print()
-        print(self.teacher2)
-
     def __init__(self, obj_func1, obj_func2, n_pop, n_gen, num_teacher, alpha, beta):
         self.obj_func1 = obj_func1
         self.obj_func2 = obj_func2
@@ -122,8 +109,6 @@ class MOTLBO:
             # chon teacher
             self.choose_teacher()
             print("Gen" + str(gen+1) + ":" + str(self.teacher1[0]) + "        "+ str(self.teacher2[0]))
-            self.finis_print()
-
 
         return self.teacher1[0], self.teacher2[0]
 

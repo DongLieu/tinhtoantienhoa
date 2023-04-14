@@ -2,10 +2,10 @@ import numpy as np
 
 # Ham muc tieu
 def obj_func1(x):
-    return (x-3)**2
+    return (x-3)**2 #x=3
 
 def obj_func2(x):
-    return (x+3)**2
+    return (x+3)**2 #x=-3
 
 # MOTLBO class
 class MOTLBO:
@@ -22,8 +22,6 @@ class MOTLBO:
         self.fitness2 = None
         self.teacher1 = None
         self.teacher2 = None
-
-
 
     #khoi tao quan the [-5; 5]
     def initialize_population(self):
@@ -113,7 +111,6 @@ class MOTLBO:
         return self.teacher1[0], self.teacher2[0]
 
 # tham so dau vao
-n_var = 2 # so bien
 n_pop = 15 # so ca the trong quan the
 n_gen = 1000 # so the he
 num_teacher = 5 # so teacher

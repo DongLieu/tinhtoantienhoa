@@ -6,7 +6,7 @@ name_folder = "nsf_urban_0"
 # n: so luong nut
 # V_nodes: id, delay, costSV(= -1 la nut PNF), costVNF1,2,3... 
 # m: so luong canh 
-# E_links:
+# E_links:u, v ,delay
 f, l, n, V_nodes, m, E_links = input.read_input(name_folder)
 
 # R so luong request moi requests[i] co :bw,mem,cpu,u,v,k,VNFs...

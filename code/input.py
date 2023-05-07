@@ -28,38 +28,38 @@ def _read_file(folder, filename):
 def read_input(name_folder):
     data = _read_file(name_folder, "input.txt")
     # so luong VNF
-    k = data[0][0]
+    f = data[0][0]
     # so luong VNF toi da duoc cai dat 
     l = data[0][1]
     # so luong nut
     n = data[1][0]
 
     # mỗi dòng gồm các số nguyên miêu tả một nút trên đồ thị: id, delay, costServer:costVNF_1, costVNF_2,...
-    dothi = []
+    V_nodes = []
     for i in range(2, n + 2):
         tmp = []
         tmp.append(data[i][0])
         tmp.append(data[i][1])
         tmp.append(data[i][2])
         if data[i][2] == -1 :
-            dothi.append(tmp)
+            V_nodes.append(tmp)
             continue
         else:
-            for j in range(3, 3 + k):
+            for j in range(3, 3 + f):
                 tmp.append(data[i][j])
-            dothi.append(tmp)
+            V_nodes.append(tmp)
     # so canh
     m = data[n+2][0]
     # mỗi dòng gồm các số nguyên miêu tả một cạnh trên đồ thị:u, v, delay(Một cạnh nối giữa u và v) delay [200,500]
-    canh_dothi = []
+    E_links = []
     for i in range(n+3, n+3 + m):
         tmp = []
         tmp.append(data[i][0])
         tmp.append(data[i][1])
         tmp.append(data[i][2])
-        canh_dothi.append(tmp)
+        E_links.append(tmp)
 
-    return k, l, n, dothi, m, canh_dothi
+    return f, l, n, V_nodes, m, E_links
 
 
 def _read_request(name_folder, name_file):

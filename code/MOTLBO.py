@@ -1,4 +1,5 @@
 import input
+import initSolution
 
 name_folder = "nsf_urban_0"
 # f: so luong VNF
@@ -12,3 +13,4 @@ f, l, n, V_nodes, m, E_links = input.read_input(name_folder)
 # R so luong request moi requests[i] co :bw,mem,cpu,u,v,k,VNFs...
 R, requests = input.read_request10(name_folder)
 
+x, y = initSolution.oneSolution(n, f, R, requests)

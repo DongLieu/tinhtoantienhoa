@@ -1,4 +1,4 @@
-from .vnf import *
+from graph_vnf import *
 
 # for new formulation
 class Node():

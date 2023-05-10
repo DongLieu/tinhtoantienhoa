@@ -5,12 +5,13 @@ import networkx
 import os, glob, shutil
 import matplotlib.pyplot as plt
 
-from .link import *
-from .node import *
-from .vnf import *
+from graph_link import *
+from graph_node import *
+from graph_vnf import *
 
 # for new formulation
 class Network():
+    
     def __init__(self, V=dict(), L=dict(), input_path=None, undirected=True) -> None:
         self.input_path = input_path
         self.undirected = undirected
@@ -22,7 +23,7 @@ class Network():
 
         self.N = dict()
         self.L = dict()
-        self.adj = dict()
+        self.adj = dict()#adjacent
         self.num_nodes = 0
         self.num_links = 0        
         self.num_servers = 0
@@ -245,3 +246,4 @@ class Network():
             plt.savefig(path)
         else:
             plt.show()
+

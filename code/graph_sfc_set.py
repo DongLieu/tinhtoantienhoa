@@ -1,7 +1,7 @@
 import os
 import numpy as np
-from .network import *
-from .sfc import *
+from graph_network import *
+from graph_sfc import *
 
 class SFC_SET():
     def __init__(self, input_path=None):
@@ -10,6 +10,7 @@ class SFC_SET():
         #print(f"Initialize sfcs from: {self.input_path} ...", end=' ')
         with open(self.input_path, "r") as f:
             lines = f.read().splitlines()
+
         self.name = os.path.split(self.input_path)[-1].split(".")[0]
         self.num_sfc = int(lines[0])
         self.sfc_set = []
@@ -57,3 +58,4 @@ class SFC_SET():
         for sfc in self.sfc_set:
             repr += f"{sfc}" + "\n"
         return repr
+

@@ -1,4 +1,4 @@
-from .node import *
+from graph_node import *
 
 class Link():
     def __init__(self, source:Node, destination:Node, delay: float, resource_capacity: float = -1, resource_available: float = -1) -> None:

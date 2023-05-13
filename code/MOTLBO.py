@@ -4,6 +4,8 @@ from graph_node import *
 from graph_sfc import *
 from graph_sfc_set import *
 from graph_vnf import *
+import initSolution
+
 
 name_folder = "nsf_uniform_1"
 
@@ -15,16 +17,13 @@ path_request10 = path_folder + name_folder + "/request10.txt"
 path_request20 = path_folder + name_folder + "/request20.txt"
 path_request30 = path_folder + name_folder + "/request30.txt"
 
-# f: so luong VNF
-# l: so luong VNF toi da trong 1 nut SV
-# n: so luong nut
-# V_nodes: id, delay, costSV(= -1 la nut PNF), costVNF1,2,3... 
-# m: so luong canh 
-# E_links:u, v ,delay
-# f, l, n, V_nodes, m, E_links = input.read_input(name_folder)
-print(path_input)
 
-# # R so luong request moi requests[i] co :bw,mem,cpu,u,v,k,VNFs...
-# R, requests = input.read_request10(name_folder)
+net = Network(path_input)
+sfc = SFC_SET(path_request10)
 
-# x, y = initSolution.oneSolution(n, f, R, requests)
+print(net.num_type_vnfs)
+# x la cach dat:n so nguyen dau tuong ung so VNF cai tren server i||sum(VNF) tiep theo la cac VNF duoc cai dat
+# y la cach dinh tuyen tu cach dat
+# x, y = initSolution.oneSolution(net.num_nodes, )
+
+

@@ -12,7 +12,7 @@ from graph_vnf import *
 # for new formulation
 class Network():
     
-    def __init__(self, V=dict(), L=dict(), input_path=None, undirected=True) -> None:
+    def __init__(self, input_path=None, undirected=True) -> None:
         self.input_path = input_path
         self.undirected = undirected
         self.name = self.input_path.split("/")[-2]

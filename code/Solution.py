@@ -16,26 +16,26 @@ class Solution():
         self.vnf_x = dict()
         
         self.mem = float
-        
 
-    def _khoitao_nhaunhien_motcachdat(self):
+        self.delay_sever = 0
+        self.delay_link = 0
+        self.cost_server = 0
+        self.cost_vnf = 0
+        
+    def init_random(self):
         x = []
-        # khoi tao n node x[i]=0 laf switch
-        # server x[i] sever i hoat dong va chay x[i] VNF
         for i in range(self.net.num_nodes):
             if i in self.net.server_ids:
-                tmp = random.randint(0, self.net.num_type_vnfs)
+                tmp = random.randint(0, self.net.N[i].num_vnfs_limit)
                 x.append(tmp)
             else:
                 x.append(0)
 
-
-        # chon VNF hoat dong ngau nhien
         for i in range(len(x)):
             tmp_x_vnf =[]
             for j in range(x[i]):
                 while(1):
-                    tmp_type_vnf = random.randint(1, self.net.num_type_vnfs)
+                    tmp_type_vnf = random.randint(0, self.net.num_type_vnfs - 1)
                     if tmp_type_vnf in tmp_x_vnf:
                         continue
                     else:
@@ -44,17 +44,45 @@ class Solution():
                         break
 
             self.x_vnf[i] = tmp_x_vnf
-        # luu id sever in dict vnf_x
-        for i in range(1,self.net.num_type_vnfs + 1):
+
+        for i in range(self.net.num_type_vnfs):
             tmp_vnf_x = []
             for j,k in self.x_vnf.items():
                 if i in k:
                     tmp_vnf_x.append(j)
 
             self.vnf_x[i] = tmp_vnf_x
-
         self.x = x
 
+    def _kichhoatNodes(self) -> bool:
+        for id, vnfs in self.x_vnf.items():
+            if self.net.N[id].type == 0 or vnfs == []:
+                continue
+            else:
+                # tinh chi phi kich hoat sever node id:
+                self.cost_server += self.net.N[id].cost
+                
+                # set vnf from j vnfs
+                for vnf in vnfs:
+                    success = self.net.N[id].install_vnf(vnf)
+                    if success:
+                        # tinh chi phi cai dat vnf
+                        
+                        continue
+                    else:
+                        print("sv {} khong the cai dat vnf type {}.".format(id, vnf) )
+                        return False
+                self.cost_vnf += self.net.N[id].total_installed_vnf_cost
+        return True
+
+    def kichhoatnode_dinhtuyen(self):
+        success = self._kichhoatNodes()
+        if not success:
+            print("cannot install vnf")
+
+        success = self._dinhtuyen() 
+        if not success:
+            print("cannot dinh tuyen voi cach dat x")
     # voi cach dat do, dinh tuyen theo yeu cua
     # su dung giai thuat tham lam y:
     # y sn -> dn: nut nguon den nut dich qua cac VNF cua nut nao

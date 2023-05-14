@@ -17,23 +17,49 @@ path_request10 = path_folder + name_folder + "/request10.txt"
 path_request20 = path_folder + name_folder + "/request20.txt"
 path_request30 = path_folder + name_folder + "/request30.txt"
 
+catherandom = []
+while(1):
+    net = Network(path_input)
+    sfc = SFC_SET(path_request10)
+    sfc.create_global_info(net)
+    net.create_constraints(sfc)
 
-net = Network(path_input)
-sfc = SFC_SET(path_request10)
+    init = Solution.Solution(net, sfc)
+    init.init_random()
+    print(init.x_vnf)
+    suc = init._kichhoatNodes()
+    if suc:
+        catherandom.append(init)
+        break
 
-sfc.create_global_info(net)
+print("ok")
+c = catherandom[0]
 
-# net.visualize
-# print(sfc.num_sfc)
-# print(net.num_servers)
-# print(net.server_ids)
-# print(net.num_type_vnfs)
-sol=Solution.Solution(net, sfc)
-sol._khoitao_nhaunhien_motcachdat()
-# print(sol.sfcs.sfc_set[0])
-print(sol.x)
-print(sol.x_vnf)
-print(sol.vnf_x)
+print("===")
+s = 0
+# for id ,node in catherandom[0].net.N.items():
+#     print(node.vnf_cost)
+#     s += node.delay
+    # print("id:{} cost: {}".format(id,node.cost))
+
+print(c.cost_server/c.net.sum_cost_servers)
+print(c.cost_vnf)
+print(c.net.N[2])
+# while(1):
+#     initmotcathe.init_randam()
+#     success = initmotcathe.kichhoatnode_dinhtuyen()
+#     if success:
+#         break
+
+
+
+# print(sol.sfcs.capmax)
+# print(sol.net.N[1].cpu_capacity)
+
+
+# print(sol.x)
+# print(sol.x_vnf)
+# print(sol.vnf_x)
 
 # print(y)
 

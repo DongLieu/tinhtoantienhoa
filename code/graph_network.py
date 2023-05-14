@@ -88,7 +88,7 @@ class Network():
                 adj_id.append([link.source.id, link.destination.id])
         self.nx_network.add_edges_from(adj_id)
 
-    def update_adjacent(self, link):
+    def _update_adjacent(self, link):
         source, destination = link.source, link.destination
         if source.id in self.adj.keys():
             self.adj[source.id][destination.id] = link
@@ -115,7 +115,7 @@ class Network():
             print("ID link is existed!")
         else:
             self.L[link.id] = link
-            self.update_adjacent(link)
+            self._update_adjacent(link)
             self.num_links += 1
 
     def delete_node(self):

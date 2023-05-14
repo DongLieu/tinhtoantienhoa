@@ -12,11 +12,8 @@ class SFC():
         self.finished = False
         self.density = len(self.vnf_list) / len(set(self.vnf_list))
 
-        # addition for version 2
-        self.finished = False
         self.path = [self.source]
         self.vnf_location = []
-        self.vnf_demand = copy.copy(self.vnf_list)
 
     def __len__(self):
         return len(self.vnf_list)

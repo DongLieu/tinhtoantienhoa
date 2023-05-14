@@ -27,7 +27,7 @@ class Node():
 
     def consume_mem(self, require_value) -> bool:
         if self.type == 0:
-            if require_value > self.mem_available:
+            if require_value > self.mem_available:      
                 return False
             else:
                 self.mem_available -= require_value
@@ -45,7 +45,7 @@ class Node():
             return True
 
     def install_vnf(self, type) -> bool:
-        if type in self.vnf_possible and self.check_num_vnf(type):
+        if type in self.vnf_possible and self._check_num_vnf(type):
             if type not in self.vnf_used:
                 self.total_installed_vnf_cost += self.vnf_cost[type]
             self.vnf_used.append(type)
@@ -53,7 +53,7 @@ class Node():
         else:
             return False
 
-    def check_num_vnf(self, vnf_id):
+    def _check_num_vnf(self, vnf_id):
         vnf_lst = self.vnf_used + [vnf_id]
         if len(set(vnf_lst)) <= self.num_vnfs_limit:
             return True
@@ -66,7 +66,7 @@ class Node():
     def __repr__(self, ) -> str:
         if self.type == 1:
             return "{} | ID: {} | Delay: {} | Cost: {} | CPU: {}/{} | vnf_used: {} | total_vnf_installing: {}".format(self.type_str, self.id, self.delay, self.cost, 
-                                                                        self.cpu_available, self.cpu_capacity,                                                                         self.vnf_used, self.total_installed_vnf_cost)
+                                                                        self.cpu_available, self.cpu_capacity, self.vnf_used, self.total_installed_vnf_cost)
         else:
             return "{} | ID: {} | Delay: {} | Cost: {} | Mem: {}/{}".format(self.type_str, self.id, self.delay, self.cost, 
                                                                         self.mem_available, self.mem_capacity)

@@ -25,8 +25,13 @@ class SFC_SET():
         self.memmax = np.sum(np.array([sfc.memory*(sfc.num_vnfs + 1) for sfc in self.sfc_set]))
         self.cpumax = np.sum(np.array([sfc.cpu*sfc.num_vnfs for sfc in self.sfc_set]))
 
+        self.max_delay_server = 0
+
+
     def create_global_info(self, network: Network):
+        self._delaymax(network)
         self.network_name = network.name
+
         self.keypoint_consume = dict() # keypoint includes source node + destination node
         for sfc in self.sfc_set:
             value = sfc.memory #if network.N[sfc.source].type == 0 else 0 #server_consume1
@@ -40,7 +45,13 @@ class SFC_SET():
                 self.keypoint_consume[sfc.destination] = value
             else:
                 self.keypoint_consume[sfc.destination] += value
-
+                
+    def _delaymax(self, network: Network):
+        tong_vnfs_di_qua = 0
+        for sfc in self.sfc_set:
+            tong_vnfs_di_qua += sfc.num_vnfs
+        self.max_delay_server = tong_vnfs_di_qua*network.max_delay_server
+        
     def sort(self):
         self.sfc_set = sorted(self.sfc_set, key=lambda x: -x.density)
 

@@ -17,10 +17,21 @@ class Solution():
         
         self.mem = float
 
-        self.delay_sever = 0
-        self.delay_link = 0
-        self.cost_server = 0
-        self.cost_vnf = 0
+        #khi dinh tuyen moi tinh toan 
+        self.delay_severs_use = 0
+        self.delay_links_use = 0
+        self.cost_servers_use = 0
+        self.cost_vnfs_use = 0
+
+# max delay server = tong vnfs request * max_delay_sever
+        self.max_delay_servers = sfcs.max_delay_server
+# max delay link = so request * (delaymax_qua_tatcac_nut)
+        self.max_delay_links = net.max_delay_links * sfcs.total_required_vnf
+# max_cost_sever = tong chi phi khi kich hoat tat ca server
+        self.max_cost_servers = net.sum_cost_servers
+# max cost vnfs = chi phi khi kich hoat taat ca vnfs treen tat ca server
+        self.max_cost_vnfs = net.max_cost_vnfs
+
         
     def init_random(self):
         x = []
@@ -60,7 +71,7 @@ class Solution():
                 continue
             else:
                 # tinh chi phi kich hoat sever node id:
-                self.cost_server += self.net.N[id].cost
+                self.cost_servers_use += self.net.N[id].cost
                 
                 # set vnf from j vnfs
                 for vnf in vnfs:
@@ -72,7 +83,8 @@ class Solution():
                     else:
                         print("sv {} khong the cai dat vnf type {}.".format(id, vnf) )
                         return False
-                self.cost_vnf += self.net.N[id].total_installed_vnf_cost
+                        
+                self.cost_vnfs_use += self.net.N[id].total_installed_vnf_cost
         return True
 
     def kichhoatnode_dinhtuyen(self):

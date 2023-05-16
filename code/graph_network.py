@@ -67,6 +67,10 @@ class Network():
         for server in self.N_server:
             self.min_delay_server = min(self.min_delay_server, server.delay)
 
+        self.max_delay_server = self.N_server[0].delay
+        for server in self.N_server:
+            self.max_delay_server = max(self.max_delay_server, server.delay)
+
         num_links = int(lines[2+self.num_nodes])
         for id in range(3 + num_nodes, 3 + num_nodes + num_links):
             line = lines[id].strip().split()
@@ -79,6 +83,8 @@ class Network():
 
         self.create_networkx()
 
+        self.max_cost_vnfs = sum(i.total_vnf_cost for i in self.N_server)
+        self.max_delay_links = sum(i.delay for i in self.L.values())
     def create_networkx(self):
         self.nx_network = networkx.Graph()
         adj_id = []

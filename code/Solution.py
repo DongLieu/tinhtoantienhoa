@@ -16,7 +16,7 @@ class Solution():
         self.vnf_x = dict()
         
         self.vnf_requests = []
-        self.search_vnf_requests()
+        self._search_vnf_requests()
 
 
 
@@ -58,12 +58,25 @@ class Solution():
                         x.append(tmp_type_vnf)
                         tmp_x_vnf.append(tmp_type_vnf)
                         break
-
-            self.x_vnf[i] = tmp_x_vnf
         self.x = x
-        self.tinh_vnf_x()
+        self.tinh_x_vnf()
+        
 
-    def tinh_vnf_x(self):
+    def tinh_x_vnf(self):
+        top = self.net.num_nodes
+
+        for node in range(self.net.num_nodes):
+            tmp = []
+            if self.x[node] == 0:
+                self.x_vnf[node] = []
+                continue
+            else:
+                
+                self.x_vnf[node] = self.x[top:top + self.x[node]]
+                top += self.x[node]
+        self._tinh_vnf_x()
+        
+    def _tinh_vnf_x(self):
         for i in range(self.net.num_type_vnfs):
             tmp_vnf_x = []
             for j,k in self.x_vnf.items():
@@ -93,15 +106,21 @@ class Solution():
         return True
 
     def kichhoatnode_dinhtuyen(self)->bool:
+        success = self.x_has_vnf_in_vnf_request()
+        if not success:
+            print("x khong co vnf request")
+            return success
+
         success = self._kichhoatNodes()
         if not success:
             print("cannot install vnf")
             return success
 
-        success = self._dinhtuyen() 
-        if not success:
-            print("cannot dinh tuyen voi cach dat x")
-            return success
+        self._dinhtuyen() 
+        return True
+        # if not success:
+        #     print("cannot dinh tuyen voi cach dat x")
+        #     return success
     # voi cach dat do, dinh tuyen theo yeu cua
     # su dung giai thuat tham lam y:
     # y sn -> dn: nut nguon den nut dich qua cac VNF cua nut nao
@@ -114,7 +133,7 @@ class Solution():
         #     return err
         # ghi vao sfcs.sfc_set[i].path
         for sfc in self.sfcs.sfc_set:
-            print("====={}:".format(sfc.id))
+            # print("====={}:".format(sfc.id))
             dinhtuyen_tmp_node = dict()
             queue = deque()
             for i in sfc.vnf_list:
@@ -128,9 +147,9 @@ class Solution():
             dinhtuyen_tmp_node[node_current] = -1
             while queue:
                 vnf_top = queue.popleft()
-                print("         vnf_top_type:{}".format(vnf_top))
+                # print("         vnf_top_type:{}".format(vnf_top))
                 nodes_co_vnf_top = self.vnf_x[vnf_top]
-                print(nodes_co_vnf_top)
+                # print(nodes_co_vnf_top)
 
                 node_continue = nodes_co_vnf_top[0]
                 for node in nodes_co_vnf_top:
@@ -148,7 +167,7 @@ class Solution():
 
             self.y[sfc.id] = dinhtuyen_tmp_node
         
-    def search_vnf_requests(self):
+    def _search_vnf_requests(self):
         for sfc in self.sfcs.sfc_set:
             for vnf in sfc.vnf_list:
                 if vnf in self.vnf_requests:
@@ -166,6 +185,4 @@ class Solution():
                     return False
         
         return True
-    # def _check_resources(self):
-    #     vnf_server
-    #     return
+

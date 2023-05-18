@@ -1,4 +1,5 @@
 import copy
+import json
 
 from graph_link import *
 from graph_network import *
@@ -32,43 +33,25 @@ while(1):
     new_sfc = copy.deepcopy(sfc)
     init = Solution(new_net, new_sfc)
     init.init_random()
-    print(init.x_vnf)
-    suc = init._kichhoatNodes()
+    suc = init.kichhoatnode_dinhtuyen()
 
     if suc:
+        print("Thanh cong")
+        print("=====.====")
         catherandom.append(init)
         break
     else:
         del new_net
         del new_sfc
 
-# print("ok")
+
 c = catherandom[0]
-print("=================")
+print("     x:")
+print(c.x)
 
-print(c.vnf_requests)
-print(c.vnf_x)
-print(c.x_has_vnf_in_vnf_request())
-if c.x_has_vnf_in_vnf_request():
-    c._dinhtuyen()
-    print(c.y)
-
-# for id, node in net.N.items():
-#     print(id)
-# nei = net.find_all_neighbor_by_id(2)
-# print(nei)
-# print(net.L[str(0) + '-' + str(1)].delay)
-# d = dict()
-# print(net.min_delay_local_tsps[0])
-# d[1] = [1, 2, 3]
-# d[2] = [1, 2, 31]
-
-# c = dict()
-# c[1] = d
-
-# print(c)
-# c._dinhtuyen()
-
+print("     y:")
+for key, value in c.y.items():
+    print(f'{key}: {value}')
 
 class MOTLBO:
     def __init__(self, N, Gen, num_remove, path_input, path_request) -> None:

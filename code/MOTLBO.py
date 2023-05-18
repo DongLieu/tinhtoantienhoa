@@ -34,6 +34,7 @@ while(1):
     init.init_random()
     print(init.x_vnf)
     suc = init._kichhoatNodes()
+
     if suc:
         catherandom.append(init)
         break
@@ -43,7 +44,32 @@ while(1):
 
 # print("ok")
 c = catherandom[0]
-print(c.x)
+print("=================")
+
+print(c.vnf_requests)
+print(c.vnf_x)
+print(c.x_has_vnf_in_vnf_request())
+if c.x_has_vnf_in_vnf_request():
+    c._dinhtuyen()
+    print(c.y)
+
+# for id, node in net.N.items():
+#     print(id)
+# nei = net.find_all_neighbor_by_id(2)
+# print(nei)
+# print(net.L[str(0) + '-' + str(1)].delay)
+# d = dict()
+# print(net.min_delay_local_tsps[0])
+# d[1] = [1, 2, 3]
+# d[2] = [1, 2, 31]
+
+# c = dict()
+# c[1] = d
+
+# print(c)
+# c._dinhtuyen()
+
+
 class MOTLBO:
     def __init__(self, N, Gen, num_remove, path_input, path_request) -> None:
         self.network = Network(path_input)
@@ -66,7 +92,7 @@ class MOTLBO:
     # Ham muc tieu:
     def obj_func(sol: Solution):
         fitness = []
-        fitness.append((sol.delay_links_use + sol.delay_severs_use)/(sol.max_delay_links + sol.max_delay_servers))
+        fitness.append(sol.delay_servers_and_links_use/(sol.max_delay_links + sol.max_delay_servers))
         fitness.append(sol.cost_servers_use/sol.max_cost_servers)
         fitness.append(sol.cost_vnfs_use/sol.max_cost_vnfs)
 

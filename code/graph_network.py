@@ -63,9 +63,9 @@ class Network():
 
         self.cost_vnfs = np.array(self.cost_vnfs)
         self.min_cost_vnfs_axis_server = np.min(self.cost_vnfs, axis = 0)
-        self.min_delay_server = self.N_server[0].delay
+        self.min_delay_local_server = self.N_server[0].delay
         for server in self.N_server:
-            self.min_delay_server = min(self.min_delay_server, server.delay)
+            self.min_delay_local_server = min(self.min_delay_local_server, server.delay)
 
         self.max_delay_server = self.N_server[0].delay
         for server in self.N_server:
@@ -85,6 +85,13 @@ class Network():
 
         self.max_cost_vnfs = sum(i.total_vnf_cost for i in self.N_server)
         self.max_delay_links = sum(i.delay for i in self.L.values())
+
+        self.min_delay_local_tsps = dict()
+        self.search_path_min()
+
+
+        self.min_delay_local = 999999999999
+
     def create_networkx(self):
         self.nx_network = networkx.Graph()
         adj_id = []
@@ -244,6 +251,81 @@ class Network():
                         return dist[v]
         return dist
 
+    def search_path_min(self):
+        for a in range(self.num_nodes):
+            node_a_to_all = []
+            for b in range(self.num_nodes):
+                if a == b:
+                    node_a_to_all.append(0)
+                else:
+                    node_a_to_all.append(self.delay_min_node_a_to_b(a, b))
+
+            self.min_delay_local_tsps[a] = node_a_to_all
+    
+    def delay_min_node_a_to_b(self, a, b):
+        # BFS
+        def try_(u, v, visits:list, total_delays):
+            # print("      u_to_v:{}-{}".format(u, v))
+            # print("      Visit:{}=====".format(visits))
+            # print()
+            # print(visits)
+            neighbors = self.find_all_neighbor_by_id(u)
+
+            for neighbor in neighbors:
+                # print("         tham dinh:{} cua start:{}".format(neighbor, u))
+                # neu v la lang gieng cua u
+                if neighbor == v:
+                    if self.min_delay_local > total_delays + self.L[str(min(u, v)) + '-' + str(max(u, v))].delay:
+                        self.min_delay_local = total_delays + self.L[str(min(u, v)) + '-' + str(max(u, v))].delay
+                        # print(":{}:{}->{}->{}".format(self.min_delay_local,visits,u,v))
+                        
+                else:
+                    check = total_delays + self.N[neighbor].type * self.N[neighbor].delay + self.L[str(min(u, neighbor)) + '-' + str(max(u, neighbor))].delay
+                    
+                    if (self.min_delay_local <= check) or (neighbor in visits):
+                        # print("         -->chu_trinh{}-{}||, chiphi lon ={}::total = {}".format(neighbor, v, check, total_delays))
+                        # print()
+                        continue
+                    else:
+                        tmp_visit = []
+                        for i in visits:
+                            tmp_visit.append(i)
+                        
+                        tmp_visit.append(u)
+                        try_(neighbor, v, tmp_visit, check)
+                        del tmp_visit
+                 
+                
+        if a in self.server_ids:
+            total_delay = self.N[a].delay
+        else:
+            total_delay = 0
+
+        if b in self.server_ids:
+            total_delay += self.N[b].delay
+        
+        visit = []
+        self.min_delay_local = 999999999999
+        # print("======tager:{}-{}".format(a,b))
+        try_(a, b, visit, total_delay)
+        # print("xxx======tager:{}".format(self.min_delay_local))
+        # print()
+        return self.min_delay_local
+
+        
+                
+        
+        # while(1):
+            
+        #     Nodes, links = self.find_all_neighbor(node_start)
+
+        #     for node in Nodes:
+        #         if node.id == b:
+        #             if min > total_delay:
+        #                 min = total_delay
+
+        return min
+    
     def visualize(self, path=None):
         if self.nx_network is None:
             self.create_networkx()

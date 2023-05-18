@@ -1,5 +1,5 @@
 import random
-from queue import LifoQueue
+from collections import deque
 
 from graph_network import *
 from graph_sfc_set import *
@@ -15,12 +15,17 @@ class Solution():
         self.x_vnf = dict()
         self.vnf_x = dict()
         
-        self.mem = float
+        self.vnf_requests = []
+        self.search_vnf_requests()
+
+
 
         #khi dinh tuyen moi tinh toan 
-        self.delay_severs_use = 0
-        self.delay_links_use = 0
+        # dinh tuyen
+        self.delay_servers_and_links_use = 0
+        # dat-ok
         self.cost_servers_use = 0
+        # dat-ok
         self.cost_vnfs_use = 0
 
 # max delay server = tong vnfs request * max_delay_sever
@@ -55,7 +60,10 @@ class Solution():
                         break
 
             self.x_vnf[i] = tmp_x_vnf
+        self.x = x
+        self.tinh_vnf_x()
 
+    def tinh_vnf_x(self):
         for i in range(self.net.num_type_vnfs):
             tmp_vnf_x = []
             for j,k in self.x_vnf.items():
@@ -63,7 +71,6 @@ class Solution():
                     tmp_vnf_x.append(j)
 
             self.vnf_x[i] = tmp_vnf_x
-        self.x = x
 
     def _kichhoatNodes(self) -> bool:
         for id, vnfs in self.x_vnf.items():
@@ -77,56 +84,88 @@ class Solution():
                 for vnf in vnfs:
                     success = self.net.N[id].install_vnf(vnf)
                     if success:
-                        # tinh chi phi cai dat vnf
-                        
                         continue
                     else:
                         print("sv {} khong the cai dat vnf type {}.".format(id, vnf) )
                         return False
-                        
+                # chi phi cai dat vnf 
                 self.cost_vnfs_use += self.net.N[id].total_installed_vnf_cost
         return True
 
-    def kichhoatnode_dinhtuyen(self):
+    def kichhoatnode_dinhtuyen(self)->bool:
         success = self._kichhoatNodes()
         if not success:
             print("cannot install vnf")
+            return success
 
         success = self._dinhtuyen() 
         if not success:
             print("cannot dinh tuyen voi cach dat x")
+            return success
     # voi cach dat do, dinh tuyen theo yeu cua
     # su dung giai thuat tham lam y:
     # y sn -> dn: nut nguon den nut dich qua cac VNF cua nut nao
     # y : [sever][VNFs su dung]
     def _dinhtuyen(self):
+        # kiem tra cach dat the co dap ung du bw, mem, cpu cho tat ca cac yeu cau k
+        # err = self._check_resources(self)
+        # if not err:
+        #     print("khong du tai nguyen")
+        #     return err
         # ghi vao sfcs.sfc_set[i].path
-        y = {}
-
         for sfc in self.sfcs.sfc_set:
-            dinhtuyen_tmp = []
-            stack_vnf = LifoQueue()
+            print("====={}:".format(sfc.id))
+            dinhtuyen_tmp_node = dict()
+            queue = deque()
             for i in sfc.vnf_list:
-                stack_vnf.put(i)
+                queue.append(i)
 
-            node_start = sfc.source
-            vnf_top = stack_vnf.get()
+            node_current = sfc.source
+            node_destination = sfc.destination
+            if node_current in self.net.server_ids:
+                self.delay_servers_and_links_use += self.net.N[node_current].delay
+            
+            dinhtuyen_tmp_node[node_current] = -1
+            while queue:
+                vnf_top = queue.popleft()
+                print("         vnf_top_type:{}".format(vnf_top))
+                nodes_co_vnf_top = self.vnf_x[vnf_top]
+                print(nodes_co_vnf_top)
 
-            while not stack_vnf.empty():
-                # tim cho VNF
-                if vnf_top in self.x_vnf[node_start]:
-                    # tinh toan co du chi phi khong
-                    if self.chi_phi_node_i_add_vnf_j():
-                        # xuly them vnf vao bang thong
-                        vnf_top = stack_vnf.get()
-                else:
-                    # tim nut lang rieng co vnf top
-                    self.net.find_all_neighbor_by_id(node_start)
+                node_continue = nodes_co_vnf_top[0]
+                for node in nodes_co_vnf_top:
+                    if self.net.min_delay_local_tsps[node_current][node_continue] > self.net.min_delay_local_tsps[node_current][node]:
+                        node_continue = node
+                
+                self.delay_servers_and_links_use += self.net.min_delay_local_tsps[node_current][node_continue]
 
+                node_current = node_continue
 
+                dinhtuyen_tmp_node[node_current] = vnf_top
 
-            y[sfc.id] = dinhtuyen_tmp
+            self.delay_servers_and_links_use += self.net.min_delay_local_tsps[node_current][node_destination]
+            dinhtuyen_tmp_node[node_destination] = -1
 
+            self.y[sfc.id] = dinhtuyen_tmp_node
         
-    def co_du_chi_phi_node_i_add_vnf_j(self)->bool:
-        return False
+    def search_vnf_requests(self):
+        for sfc in self.sfcs.sfc_set:
+            for vnf in sfc.vnf_list:
+                if vnf in self.vnf_requests:
+                    continue
+                else:
+                    self.vnf_requests.append(vnf)
+                    if len(self.vnf_requests) == self.net.num_type_vnfs:
+                        return
+
+    def x_has_vnf_in_vnf_request(self) -> bool:
+
+        for vnf_type, nodes in self.vnf_x.items():
+            if nodes == []:
+                if vnf_type in self.vnf_requests:
+                    return False
+        
+        return True
+    # def _check_resources(self):
+    #     vnf_server
+    #     return

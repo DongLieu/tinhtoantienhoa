@@ -36,8 +36,8 @@ while(1):
     suc = init.kichhoatnode_dinhtuyen()
 
     if suc:
+        print("=========")
         print("Thanh cong")
-        print("=====.====")
         catherandom.append(init)
         break
     else:
@@ -52,6 +52,29 @@ print(c.x)
 print("     y:")
 for key, value in c.y.items():
     print(f'{key}: {value}')
+print(c.delay_servers_and_links_use/(c.max_delay_links+c.max_delay_servers))
+print("=================")
+
+new_net = copy.deepcopy(net)
+new_sfc = copy.deepcopy(sfc)
+init = Solution(new_net, new_sfc)
+init.x = [0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 3, 1, 0, 3, 4, 3, 0, 2, 1, 3, 0 , 2, 1 ]
+print(init.x)
+init.tinh_x_vnf()
+suc = init.kichhoatnode_dinhtuyen()
+if suc:
+    print("Thanh cong")
+    print( "    x_vnf:")
+    print(init.x_vnf)
+    catherandom.append(init)
+else:
+    del new_net
+    del new_sfc
+print("     y:")
+print(init.y)
+print("     x:")
+print(init.x)
+print(init.delay_servers_and_links_use/(init.max_delay_links+init.max_delay_servers))
 
 class MOTLBO:
     def __init__(self, N, Gen, num_remove, path_input, path_request) -> None:

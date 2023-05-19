@@ -99,7 +99,7 @@ class Solution():
                     if success:
                         continue
                     else:
-                        print("sv {} khong the cai dat vnf type {}.".format(id, vnf) )
+                        # print("sv {} khong the cai dat vnf type {}.".format(id, vnf) )
                         return False
                 # chi phi cai dat vnf 
                 self.cost_vnfs_use += self.net.N[id].total_installed_vnf_cost
@@ -108,32 +108,19 @@ class Solution():
     def kichhoatnode_dinhtuyen(self)->bool:
         success = self.x_has_vnf_in_vnf_request()
         if not success:
-            print("x khong co vnf request")
+            # print("x khong co vnf request")
             return success
 
         success = self._kichhoatNodes()
         if not success:
-            print("cannot install vnf")
+            # print("cannot install vnf")
             return success
 
         self._dinhtuyen() 
         return True
-        # if not success:
-        #     print("cannot dinh tuyen voi cach dat x")
-        #     return success
-    # voi cach dat do, dinh tuyen theo yeu cua
-    # su dung giai thuat tham lam y:
-    # y sn -> dn: nut nguon den nut dich qua cac VNF cua nut nao
-    # y : [sever][VNFs su dung]
+       
     def _dinhtuyen(self):
-        # kiem tra cach dat the co dap ung du bw, mem, cpu cho tat ca cac yeu cau k
-        # err = self._check_resources(self)
-        # if not err:
-        #     print("khong du tai nguyen")
-        #     return err
-        # ghi vao sfcs.sfc_set[i].path
         for sfc in self.sfcs.sfc_set:
-            # print("====={}:".format(sfc.id))
             dinhtuyen_tmp_node = dict()
             queue = deque()
             for i in sfc.vnf_list:
@@ -145,12 +132,11 @@ class Solution():
                 self.delay_servers_and_links_use += self.net.N[node_current].delay
             
             dinhtuyen_tmp_node[node_current] = -1
+            # duyet tu vnf dau
             while queue:
-                vnf_top = queue.popleft()
-                # print("         vnf_top_type:{}".format(vnf_top))
+                vnf_top = queue.popleft()  
                 nodes_co_vnf_top = self.vnf_x[vnf_top]
-                # print(nodes_co_vnf_top)
-
+                
                 node_continue = nodes_co_vnf_top[0]
                 for node in nodes_co_vnf_top:
                     if self.net.min_delay_local_tsps[node_current][node_continue] > self.net.min_delay_local_tsps[node_current][node]:

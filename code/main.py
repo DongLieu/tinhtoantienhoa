@@ -17,5 +17,11 @@ num_remove = 10
 
 motlbo = MOTLBO(n_pop, gen, num_remove, path_input, path_request10)
 motlbo.initialize_population()
+motlbo.evaluate_population()
 print(len(motlbo.pop))
-print(motlbo.pop[0].x_vnf)
+
+print(motlbo.pop[0].vnf_x)
+print(motlbo.fitness[0])
+print(motlbo.fitness[0][0])
+print(motlbo.fitness[0][1])
+print(motlbo.fitness[0][2])

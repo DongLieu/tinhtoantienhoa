@@ -1,5 +1,6 @@
 import copy
-import json
+from typing import Tuple
+
 
 from graph_link import *
 from graph_network import *
@@ -101,11 +102,33 @@ class MOTLBO:
 
         self.teacher = []
         self.teacher_fitness = []
-        self.expulsion = []
+        
+        self.need_improve = []
+        self.dominant_set = []
+        self.expulsion_set = []
 
-
+    def run(self):
+        # khoi tao
+        self.initialize_population()
+        # tinh gia tri ham muc tieu
+        self.evaluate_population()
+        # sap xep, tim ra top_finess va ca the yeu
+        self.good_finess_and_expulsion()
+        for gen in range(self.Gen):
+            # day
+            self.teaching_phase()
+            # hoc
+            self.learning_phase()
+            # loai bo va them vao ca the moi
+            self.remove_phase()
+            # dinh tuyen, tinh gia tri
+            self.evaluate_population()
+            # sap xep, tim ra top_finess va ca the yeu
+            self.good_finess_and_expulsion()
+            print("Gen:{} Delay:{} Cost_Server:{} Cost_VNF:{}".format(gen,self.teacher_fitness[0][0], self.teacher_fitness[1][1], self.teacher_fitness[2][2]))
+    
     # Ham muc tieu:
-    def obj_func(self,sol: Solution):
+    def _obj_func(self,sol: Solution):
         fitness = []
         fitness.append(sol.delay_servers_and_links_use/(sol.max_delay_links + sol.max_delay_servers))
         fitness.append(sol.cost_servers_use/sol.max_cost_servers)
@@ -129,45 +152,131 @@ class MOTLBO:
                 del new_sfc_set
     #  tinh gia tri ham muc tieu cho moi pop[i]
     def evaluate_population(self):
+        fitniss_tmp = []
         for solution in self.pop:
-            fitniss_sol =  self.obj_func(solution)
-            self.fitness.append(fitniss_sol)
+            fitniss_sol =  self._obj_func(solution)
+            fitniss_tmp.append(fitniss_sol)
+        
+        self.fitness = fitniss_tmp
 
     # chon ra ca the khong bi thong tri boi ca the khac lam teacher
-    def top_finess_and_expulsion(self):
-        for sol1_id in range(self.N):
-            for sol2_id in range(self.N):
+    def good_finess_and_expulsion(self):
+        need_improve_tmp = []
+        for sol1_id in range(self.n_pop):
+            for sol2_id in range(self.n_pop):
+                if sol1_id == sol2_id:
+                    continue
                 if self.fitness[sol1_id][0] >= self.fitness[sol2_id][0] and self.fitness[sol1_id][1] >= self.fitness[sol2_id][1] and self.fitness[sol1_id][2] >= self.fitness[sol2_id][2]:
-                    self.expulsion.append(sol1_id)
-            
+                    need_improve_tmp.append(sol1_id)
+                    break
+
+        self.need_improve = need_improve_tmp
+
+        dominant_set_tmp = []
+        for sol_id in range(self.n_pop):
+            if sol_id in self.need_improve:
+                continue
+            else:
+                dominant_set_tmp.append(sol_id)
+
+        self.dominant_set = dominant_set_tmp
+        
+        fitniss_lose = []
+        for sol_ex in self.need_improve:
+            tmp = []
+            tmp.append(sol_ex)
+            total_fitniss = sum(self.fitness[sol_ex])
+            tmp.append(total_fitniss)
+            fitniss_lose.append(tmp)
+
+        sorted_lose = sorted(fitniss_lose, key=lambda x: x[1], reverse=True)
+        self.expulsion_set = [sol_lose[0] for sol_lose in sorted_lose[:20]]
+
+
     # teaching_phase()
     def teaching_phase(self):
-        return
+        for teacher in self.dominant_set:
+            for student in self.need_improve:
+                if student in self.expulsion_set:
+                    continue
+                else:
+                    stu = self.pop[student]
+                    tea = self.pop[teacher]
+
+                    new_student, success = self._teacher_teaching_student(tea, stu)
+                    if success:
+                        # kiem tra xem co tot hon student hien tai ko
+                        yes = self._thaythe(stu, new_student)
+                        if yes:
+                            stu = new_student
+
+                    else:
+                        continue
+
+        
     def learning_phase(self):
         return
     # loai bo va them vao ca the moi
     def remove_phase(self):
-        return
+        for sol in self.expulsion_set:
+            while(1):
+                new_net = copy.deepcopy(self.network)
+                new_sfc = copy.deepcopy(self.sfc_set)
+                init = Solution(new_net, new_sfc)
+
+                init.init_random()
+                suc = init.kichhoatnode_dinhtuyen()
+
+                if suc:
+                    self.pop[sol] = init
+                    break
+                else:
+                    del new_net
+                    del new_sfc
+                    
     
-    def run(self):
-        # khoi tao
-        self.initialize_population()
-        # tinh gia tri ham muc tieu
-        self.evaluate_population()
-        # sap xep, tim ra top_finess va ca the yeu
-        self.top_finess_and_expulsion()
-        for gen in range(self.Gen):
-            # day
-            self.teaching_phase()
-            # hoc
-            self.learning_phase()
-            # loai bo va them vao ca the moi
-            self.remove_phase()
-            # dinh tuyen, tinh gia tri
-            self.evaluate_population()
-            # sap xep, tim ra top_finess va ca the yeu
-            self.top_finess_and_expulsion()
-            print("Gen:{} Delay:{} Cost_Server:{} Cost_VNF:{}".format(gen,self.teacher_fitness[0][0], self.teacher_fitness[1][1], self.teacher_fitness[2][2]))
+
+    def _teacher_teaching_student(self, teacher: Solution, student: Solution) -> Tuple[Solution, bool]:
+        x_teacher = teacher.x
+        x_student = student.x
+        num_nodes = len(teacher.x_vnf)
+        diem_cat = random.randint(1, num_nodes - 1)
+
+        new_netw = copy.deepcopy(self.network)
+        new_sfc_set = copy.deepcopy(self.sfc_set)
+        
+        new_student = Solution(new_netw, new_sfc_set)
+
+        x = x_student[:diem_cat] + x_teacher[diem_cat:num_nodes]
+        num_vnf_student = sum(x_student[:diem_cat])
+        num_vnf_teacher = sum(x_teacher[:diem_cat])
+        
+        x = x + x_student[num_nodes:num_nodes + num_vnf_student]
+        x = x + x_teacher[num_nodes + num_vnf_teacher: len(x_teacher)]
+
+        sum_check = sum(x[:num_nodes])
+        if sum_check != len(x) - num_nodes:
+            print("saile")
+            return new_student, False
+        else:
+            new_student.x = x
+            new_student.tinh_x_vnf()
+            success = new_student.kichhoatnode_dinhtuyen()
+            if success:
+                return new_student, True
+            else:
+                print("khong kich hoat dc")
+                return new_student, False
+            
+    def _thaythe(self, student: Solution, new_student: Solution)->bool:
+        fitnis_student = self._obj_func(student)
+        fitnis_new_student = self._obj_func(new_student)
+
+        if sum(fitnis_new_student) < sum(fitnis_student):
+            return True
+        else:
+            return False
+
 
         
 

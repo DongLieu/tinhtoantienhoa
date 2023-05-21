@@ -10,82 +10,6 @@ from graph_sfc_set import *
 from graph_vnf import *
 
 from Solution import *
-
-name_folder = "nsf_uniform_1"
-# name_folder = "nsf_urban_0"
-
-path_folder = "/Users/duongdong/tinhtoantienhoa/dataset/"
-
-path_input = path_folder + name_folder + "/input.txt"
-
-path_request10 = path_folder + name_folder + "/request10.txt"
-path_request20 = path_folder + name_folder + "/request20.txt"
-path_request30 = path_folder + name_folder + "/request30.txt"
-
-net = Network(path_input)
-sfc = SFC_SET(path_request10)
-sfc.create_global_info(net)
-net.create_constraints(sfc)
-
-# catherandom = []
-
-# while(1):
-#     new_net = copy.deepcopy(net)
-#     new_sfc = copy.deepcopy(sfc)
-#     init = Solution(new_net, new_sfc)
-#     init.init_random()
-#     suc = init.kichhoatnode_dinhtuyen()
-
-#     if suc:
-#         print("=========")
-#         print("Thanh cong")
-#         catherandom.append(init)
-#         del new_net
-#         del new_sfc
-#         break
-#     else:
-#         del new_net
-#         del new_sfc
-
-
-# c = catherandom[0]
-# print("     x:")
-# print(c.x)
-
-# print("     y:")
-# for key, value in c.y.items():
-#     print(f'{key}: {value}')
-# print(c.delay_servers_and_links_use/(c.max_delay_links+c.max_delay_servers))
-# print(c.net.num_nodes)
-# print("=================")
-
-# new_net = copy.deepcopy(net)
-# new_sfc = copy.deepcopy(sfc)
-# init = Solution(new_net, new_sfc)
-# init.x = [0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 3, 1, 0, 3, 4, 3, 0, 2, 1, 3, 0 , 2, 1 ]
-# init.tinh_x_vnf()
-# suc = init.kichhoatnode_dinhtuyen()
-# if suc:
-#     print("Thanh cong")
-#     catherandom.append(init)
-# else:
-#     del new_net
-#     del new_sfc
-
-# print("     x:")
-# print(init.x_vnf)
-# print("     y:")
-# for key, value in init.y.items():
-#     print(f'{key}: {value}')
-# print(init.delay_servers_and_links_use/(init.max_delay_links+init.max_delay_servers))
-
-# print("==========")
-# for id, link in init.net.L.items():
-#     print(link)
-
-# print("==========")  
-# for id, node in init.net.N.items():
-#     print(node)
 class MOTLBO:
     def __init__(self, N, Gen, num_remove, path_input, path_request) -> None:
         self.network = Network(path_input)
@@ -125,7 +49,10 @@ class MOTLBO:
             self.evaluate_population()
             # sap xep, tim ra top_finess va ca the yeu
             self.good_finess_and_expulsion()
-            print("Gen:{} Delay:{} Cost_Server:{} Cost_VNF:{}".format(gen,self.teacher_fitness[0][0], self.teacher_fitness[1][1], self.teacher_fitness[2][2]))
+            print("Gen:{} ".format(gen))
+            for good_fitniss in self.dominant_set:
+                print("{}:{}".format(sum(self.fitness[good_fitniss]), self.fitness[good_fitniss]))
+            print()
     
     # Ham muc tieu:
     def _obj_func(self,sol: Solution):
@@ -190,7 +117,7 @@ class MOTLBO:
             fitniss_lose.append(tmp)
 
         sorted_lose = sorted(fitniss_lose, key=lambda x: x[1], reverse=True)
-        self.expulsion_set = [sol_lose[0] for sol_lose in sorted_lose[:20]]
+        self.expulsion_set = [sol_lose[0] for sol_lose in sorted_lose[:self.num_remove]]
 
 
     # teaching_phase()
@@ -215,7 +142,28 @@ class MOTLBO:
 
         
     def learning_phase(self):
-        return
+        for student1 in self.need_improve:
+            if student1 in self.expulsion_set:
+                    continue
+            for student2 in self.need_improve:
+                if student1 in self.expulsion_set or student1 == student2:
+                    continue
+                else:
+                    stu1 = self.pop[student1]
+                    stu2 = self.pop[student2]
+
+                    r = np.random.rand()
+                    if r > 0.5:
+                        stu_new, success = self._teacher_teaching_student(stu1, stu2)
+                        if success:
+                            # kiem tra xem co tot hon student hien tai ko
+                            yes = self._thaythe(stu1, stu_new)
+                            if yes:
+                                stu1 = stu_new
+
+
+
+        
     # loai bo va them vao ca the moi
     def remove_phase(self):
         for sol in self.expulsion_set:
@@ -256,7 +204,7 @@ class MOTLBO:
 
         sum_check = sum(x[:num_nodes])
         if sum_check != len(x) - num_nodes:
-            print("saile")
+            print("lai ra mot ca the moi khong dung duoc")
             return new_student, False
         else:
             new_student.x = x
@@ -265,7 +213,7 @@ class MOTLBO:
             if success:
                 return new_student, True
             else:
-                print("khong kich hoat dc")
+                # print("khong kich hoat dc")
                 return new_student, False
             
     def _thaythe(self, student: Solution, new_student: Solution)->bool:
@@ -279,5 +227,79 @@ class MOTLBO:
 
 
         
+# NAME_FOLDER = "nsf_uniform_1"
+# # NAME_FOLDER = "nsf_urban_0"
 
+# PATH_FOLDER = "/Users/duongdong/tinhtoantienhoa/dataset/"
+
+# path_input = PATH_FOLDER + NAME_FOLDER + "/input.txt"
+
+# path_request10 = PATH_FOLDER + NAME_FOLDER + "/request10.txt"
+# path_request20 = PATH_FOLDER + NAME_FOLDER + "/request20.txt"
+# path_request30 = PATH_FOLDER + NAME_FOLDER + "/request30.txt"
+
+# net = Network(path_input)
+# sfc = SFC_SET(path_request10)
+# sfc.create_global_info(net)
+# net.create_constraints(sfc)
+
+# catherandom = []
+
+# while(1):
+#     new_net = copy.deepcopy(net)
+#     new_sfc = copy.deepcopy(sfc)
+#     init = Solution(new_net, new_sfc)
+#     init.init_random()
+#     suc = init.kichhoatnode_dinhtuyen()
+
+#     if suc:
+#         print("=========")
+#         print("Thanh cong")
+#         catherandom.append(init)
+#         del new_net
+#         del new_sfc
+#         break
+#     else:
+#         del new_net
+#         del new_sfc
+
+
+# c = catherandom[0]
+# print("     x:")
+# print(c.x)
+
+# print("     y:")
+# for key, value in c.y.items():
+#     print(f'{key}: {value}')
+# print(c.delay_servers_and_links_use/(c.max_delay_links+c.max_delay_servers))
+# print(c.net.num_nodes)
+# print("=================")
+
+# new_net = copy.deepcopy(net)
+# new_sfc = copy.deepcopy(sfc)
+# init = Solution(new_net, new_sfc)
+# init.x = [0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 3, 1, 0, 3, 4, 3, 0, 2, 1, 3, 0 , 2, 1 ]
+# init.tinh_x_vnf()
+# suc = init.kichhoatnode_dinhtuyen()
+# if suc:
+#     print("Thanh cong")
+#     catherandom.append(init)
+# else:
+#     del new_net
+#     del new_sfc
+
+# print("     x:")
+# print(init.x_vnf)
+# print("     y:")
+# for key, value in init.y.items():
+#     print(f'{key}: {value}')
+# print(init.delay_servers_and_links_use/(init.max_delay_links+init.max_delay_servers))
+
+# print("==========")
+# for id, link in init.net.L.items():
+#     print(link)
+
+# print("==========")  
+# for id, node in init.net.N.items():
+#     print(node)
 

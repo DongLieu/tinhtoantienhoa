@@ -1,24 +1,25 @@
 from MOTLBO import *
 
-name_folder = "nsf_uniform_1"
-# name_folder = "nsf_urban_0"
+NAME_FOLDER = "nsf_uniform_1"
 
-path_folder = "/Users/duongdong/tinhtoantienhoa/dataset/"
+PATH_FOLDER = "/Users/duongdong/tinhtoantienhoa/dataset/"
 
-path_input = path_folder + name_folder + "/input.txt"
+PATH_INPUT = PATH_FOLDER + NAME_FOLDER + "/input.txt"
 
-path_request10 = path_folder + name_folder + "/request10.txt"
-path_request20 = path_folder + name_folder + "/request20.txt"
-path_request30 = path_folder + name_folder + "/request30.txt"
+PATH_REQUEST10 = PATH_FOLDER + NAME_FOLDER + "/request10.txt"
+PATH_REQUEST20 = PATH_FOLDER + NAME_FOLDER + "/request20.txt"
+PATH_REQUEST30 = PATH_FOLDER + NAME_FOLDER + "/request30.txt"
 
-n_pop = 100
-gen = 1000
-num_remove = 10
+N_POP = 100
+GEN = 1000
+NUM_REMOVE = 20
 
-motlbo = MOTLBO(n_pop, gen, num_remove, path_input, path_request10)
-motlbo.initialize_population()
-motlbo.evaluate_population()
-motlbo.good_finess_and_expulsion()
+motlbo = MOTLBO(N_POP, GEN, NUM_REMOVE, PATH_INPUT, PATH_REQUEST10)
+motlbo.run()
+
+# motlbo.initialize_population()
+# motlbo.evaluate_population()
+# motlbo.good_finess_and_expulsion()
 
 # print(len(motlbo.need_improve))
 
@@ -32,23 +33,23 @@ motlbo.good_finess_and_expulsion()
 # print("-----------")
 # print(len(motlbo.dominant_set))
 # print(motlbo.dominant_set)
-x_teacher = motlbo.pop[0]
-x_student = motlbo.pop[1]
-print(x_student.x)
-print(x_student.delay_servers_and_links_use)
-print("-----------")
+# x_teacher = motlbo.pop[0]
+# x_student = motlbo.pop[1]
+# print(x_student.x)
+# print(x_student.delay_servers_and_links_use)
+# print("-----------")
 
 
-new_student, success = motlbo._teacher_teaching_student(x_teacher, x_student)
-if success:
-    print("ok")
-    x_student = new_student
+# new_student, success = motlbo._teacher_teaching_student(x_teacher, x_student)
+# if success:
+#     print("ok")
+#     x_student = new_student
 
-print(new_student.x)
-print(new_student.delay_servers_and_links_use)
-print("-----------")
-print(x_student.x)
-print(x_student.delay_servers_and_links_use)
+# print(new_student.x)
+# print(new_student.delay_servers_and_links_use)
+# print("-----------")
+# print(x_student.x)
+# print(x_student.delay_servers_and_links_use)
 
 
 

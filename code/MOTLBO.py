@@ -1,5 +1,6 @@
 import copy
 from typing import Tuple
+from tqdm import tqdm
 
 
 from graph_link import *
@@ -31,6 +32,8 @@ class MOTLBO:
         self.dominant_set = []
         self.expulsion_set = []
 
+        self.quansat = 0
+
     def run(self):
         # khoi tao
         self.initialize_population()
@@ -38,7 +41,7 @@ class MOTLBO:
         self.evaluate_population()
         # sap xep, tim ra top_finess va ca the yeu
         self.good_finess_and_expulsion()
-        for gen in range(self.Gen):
+        for gen in tqdm(range(self.Gen)):
             # day
             self.teaching_phase()
             # hoc
@@ -49,11 +52,25 @@ class MOTLBO:
             self.evaluate_population()
             # sap xep, tim ra top_finess va ca the yeu
             self.good_finess_and_expulsion()
-            print("Gen:{} ".format(gen))
-            for good_fitniss in self.dominant_set:
-                print("{}:{}".format(sum(self.fitness[good_fitniss]), self.fitness[good_fitniss]))
-            print()
-    
+
+
+            for good_fitness in self.dominant_set:
+                if sum(self.fitness[good_fitness]) < sum(self.fitness[self.quansat]):
+                    self.quansat = good_fitness
+            
+
+
+            with open('output.txt', 'a') as file:
+                # Ghi các lời gọi print vào file
+                if self.quansat in self.need_improve:
+                    print("llllllllllllllllllll")
+
+                print("Good: {}||ID: {} || x: {}".format(sum(self.fitness[self.quansat]),self.quansat,  self.pop[self.quansat].x_vnf), file = file)
+                print("Gen: {}::::len_fitnis={}||len-pop={}".format(gen + 1, len(self.fitness), len(self.pop)), file=file)
+                for good_fitness in self.dominant_set:
+                    print("{}: {}".format(sum(self.fitness[good_fitness]), self.fitness[good_fitness]), file=file)
+                print("", file=file)  # In một dòng trống
+                
     # Ham muc tieu:
     def _obj_func(self,sol: Solution):
         fitness = []
@@ -70,13 +87,17 @@ class MOTLBO:
             
             init = Solution(new_netw, new_sfc_set)
             init.init_random()
-
-            suc = init.kichhoatnode_dinhtuyen()
-            if suc:
-                self.pop.append(init)
-            else:
+            
+            if self._sol_in_pop(init):
                 del new_netw
                 del new_sfc_set
+            else:
+                suc = init.kichhoatnode_dinhtuyen()
+                if suc:
+                    self.pop.append(init)
+                else:
+                    del new_netw
+                    del new_sfc_set
     #  tinh gia tri ham muc tieu cho moi pop[i]
     def evaluate_population(self):
         fitniss_tmp = []
@@ -94,6 +115,12 @@ class MOTLBO:
                 if sol1_id == sol2_id:
                     continue
                 if self.fitness[sol1_id][0] >= self.fitness[sol2_id][0] and self.fitness[sol1_id][1] >= self.fitness[sol2_id][1] and self.fitness[sol1_id][2] >= self.fitness[sol2_id][2]:
+                    if self.quansat == sol1_id:
+                        print("quansat = ", sol1_id)
+                        print("fitness_quan sat =", self.fitness[self.quansat])
+                        print("sol2 id : ", sol2_id)
+                        print("fitness sol2=", self.fitness[sol2_id])
+
                     need_improve_tmp.append(sol1_id)
                     break
 
@@ -132,13 +159,22 @@ class MOTLBO:
 
                     new_student, success = self._teacher_teaching_student(tea, stu)
                     if success:
-                        # kiem tra xem co tot hon student hien tai ko
-                        yes = self._thaythe(stu, new_student)
-                        if yes:
-                            stu = new_student
+                        if self._sol_in_pop(new_student):
+                            continue
+                        else:
+                            # kiem tra xem co tot hon student hien tai ko
+                            yes = self._thaythe(stu, new_student)
+                            if yes:
+                                if self.quansat == student:
+                                    print("thay doi o tech: id:", self.quansat)
+                                    print("x1:", self.pop[student].x)
+                    
+                                stu = new_student
 
-                    else:
-                        continue
+                                if self.quansat == student:
+                                    print("x2:", self.pop[student].x)
+
+                  
 
         
     def learning_phase(self):
@@ -156,31 +192,45 @@ class MOTLBO:
                     if r > 0.5:
                         stu_new, success = self._teacher_teaching_student(stu1, stu2)
                         if success:
-                            # kiem tra xem co tot hon student hien tai ko
-                            yes = self._thaythe(stu1, stu_new)
-                            if yes:
-                                stu1 = stu_new
-
+                            if self._sol_in_pop(stu_new):
+                                continue
+                            else:
+                                # kiem tra xem co tot hon student hien tai ko
+                                yes = self._thaythe(stu1, stu_new)
+                                if yes:
+                                    if self.quansat == student1:
+                                        print("thay doi o lear id:", self.quansat)
+                                        print("x1:", self.pop[student1].x)
+                    
+                                    stu1 = stu_new
+                                    if self.quansat == student1:
+                                        print("x2:", self.pop[student1].x)
 
 
         
     # loai bo va them vao ca the moi
     def remove_phase(self):
         for sol in self.expulsion_set:
+            if self.quansat == sol:
+                print("loi sieu to")
             while(1):
                 new_net = copy.deepcopy(self.network)
                 new_sfc = copy.deepcopy(self.sfc_set)
                 init = Solution(new_net, new_sfc)
 
                 init.init_random()
-                suc = init.kichhoatnode_dinhtuyen()
-
-                if suc:
-                    self.pop[sol] = init
-                    break
-                else:
+                if self._sol_in_pop(init):
                     del new_net
                     del new_sfc
+                else:
+                    suc = init.kichhoatnode_dinhtuyen()
+
+                    if suc:
+                        self.pop[sol] = init
+                        break
+                    else:
+                        del new_net
+                        del new_sfc
                     
     
 
@@ -224,11 +274,16 @@ class MOTLBO:
             return True
         else:
             return False
+    def _sol_in_pop(self, new_sol: Solution)->bool:
+        for sol in self.pop:
+            if new_sol.x == sol.x:
+                return True
+        
+        return False
 
 
         
 # NAME_FOLDER = "nsf_uniform_1"
-# # NAME_FOLDER = "nsf_urban_0"
 
 # PATH_FOLDER = "/Users/duongdong/tinhtoantienhoa/dataset/"
 
@@ -265,8 +320,20 @@ class MOTLBO:
 
 
 # c = catherandom[0]
-# print("     x:")
+# # print("     x:")
+# x = c.x 
 # print(c.x)
+
+# new_net = copy.deepcopy(net)
+# new_sfc = copy.deepcopy(sfc)
+# init = Solution(new_net, new_sfc)
+
+# init.x = x
+# init.tinh_x_vnf()
+# init.kichhoatnode_dinhtuyen()
+# print(init.x)
+# for sol in catherandom:
+#     print(init.x == sol.x )
 
 # print("     y:")
 # for key, value in c.y.items():

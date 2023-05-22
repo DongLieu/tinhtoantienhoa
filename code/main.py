@@ -11,10 +11,12 @@ PATH_REQUEST20 = PATH_FOLDER + NAME_FOLDER + "/request20.txt"
 PATH_REQUEST30 = PATH_FOLDER + NAME_FOLDER + "/request30.txt"
 
 N_POP = 100
-GEN = 1000
+GEN = 3000
 NUM_REMOVE = 20
 
 motlbo = MOTLBO(N_POP, GEN, NUM_REMOVE, PATH_INPUT, PATH_REQUEST10)
+with open('output.txt', 'w') as file:
+    print()
 motlbo.run()
 
 # motlbo.initialize_population()

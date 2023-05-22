@@ -39,6 +39,8 @@ class MOTLBO:
         self.initialize_population()
         # tinh gia tri ham muc tieu
         self.evaluate_population()
+        # trung sol
+        self.trung_sol()
         # sap xep, tim ra top_finess va ca the yeu
         self.good_finess_and_expulsion()
         for gen in tqdm(range(self.Gen)):
@@ -50,16 +52,15 @@ class MOTLBO:
             self.remove_phase()
             # dinh tuyen, tinh gia tri
             self.evaluate_population()
+            # trung sol
+            self.trung_sol()
             # sap xep, tim ra top_finess va ca the yeu
             self.good_finess_and_expulsion()
-
 
             for good_fitness in self.dominant_set:
                 if sum(self.fitness[good_fitness]) < sum(self.fitness[self.quansat]):
                     self.quansat = good_fitness
             
-
-
             with open('output.txt', 'a') as file:
                 # Ghi các lời gọi print vào file
                 if self.quansat in self.need_improve:
@@ -110,19 +111,40 @@ class MOTLBO:
     # chon ra ca the khong bi thong tri boi ca the khac lam teacher
     def good_finess_and_expulsion(self):
         need_improve_tmp = []
-        for sol1_id in range(self.n_pop):
-            for sol2_id in range(self.n_pop):
+        for sol1_id in range(0, self.n_pop):
+            for sol2_id in range(0 ,self.n_pop):
                 if sol1_id == sol2_id:
                     continue
                 if self.fitness[sol1_id][0] >= self.fitness[sol2_id][0] and self.fitness[sol1_id][1] >= self.fitness[sol2_id][1] and self.fitness[sol1_id][2] >= self.fitness[sol2_id][2]:
-                    if self.quansat == sol1_id:
-                        print("quansat = ", sol1_id)
-                        print("fitness_quan sat =", self.fitness[self.quansat])
-                        print("sol2 id : ", sol2_id)
-                        print("fitness sol2=", self.fitness[sol2_id])
+                    if self.fitness[sol1_id] == self.fitness[sol2_id]:
+                        while(1):
+                            print("sol1 = sol2")
+                            new_net = copy.deepcopy(self.network)
+                            new_sfc = copy.deepcopy(self.sfc_set)
+                            init = Solution(new_net, new_sfc)
 
-                    need_improve_tmp.append(sol1_id)
-                    break
+                            init.init_random()
+                            if self._sol_in_pop(init):
+                                del new_net
+                                del new_sfc
+                            else:
+                                suc = init.kichhoatnode_dinhtuyen()
+
+                                if suc:
+                                    self.pop[sol1_id] = init
+                                    break
+                                else:
+                                    del new_net
+                                    del new_sfc
+                    else:
+                        if self.quansat == sol1_id:
+                            print("quansat id = {}|| x = {}".format(sol1_id, self.pop[sol1_id].x))
+                            print("fitness_quan sat =", self.fitness[self.quansat])
+                            print("sol2 id : {}|| x = {}".format(sol2_id, self.pop[sol2_id].x))
+                            print("fitness sol2=", self.fitness[sol2_id])
+
+                        need_improve_tmp.append(sol1_id)
+                        break
 
         self.need_improve = need_improve_tmp
 
@@ -280,6 +302,32 @@ class MOTLBO:
                 return True
         
         return False
+    def trung_sol(self):
+        for sol1 in range(0, len(self.pop)):
+            for sol2 in range(sol1 +1 ,len(self.pop)):
+                if self.fitness[sol1] == self.fitness[sol2]:
+                     print("trung lap == tung lap")
+                     while(1):
+                        new_net = copy.deepcopy(self.network)
+                        new_sfc = copy.deepcopy(self.sfc_set)
+                        init = Solution(new_net, new_sfc)
+
+                        init.init_random()
+                        if self._sol_in_pop(init):
+                            del new_net
+                            del new_sfc
+                        else:
+                            suc = init.kichhoatnode_dinhtuyen()
+
+                            if suc:
+                                self.pop[sol1] = init
+                                self.fitness[sol1] = self._obj_func(init)
+                                break
+                            else:
+                                del new_net
+                                del new_sfc
+
+
 
 
         

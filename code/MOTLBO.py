@@ -39,7 +39,7 @@ class MOTLBO:
         self.initialize_population()
         # tinh gia tri ham muc tieu
         self.evaluate_population()
-        # trung sol
+        # sol was in pop
         self.trung_sol()
         # sap xep, tim ra top_finess va ca the yeu
         self.good_finess_and_expulsion()
@@ -52,7 +52,7 @@ class MOTLBO:
             self.remove_phase()
             # dinh tuyen, tinh gia tri
             self.evaluate_population()
-            # trung sol
+            # sol was in pop
             self.trung_sol()
             # sap xep, tim ra top_finess va ca the yeu
             self.good_finess_and_expulsion()
@@ -63,9 +63,6 @@ class MOTLBO:
             
             with open('output.txt', 'a') as file:
                 # Ghi các lời gọi print vào file
-                if self.quansat in self.need_improve:
-                    print("llllllllllllllllllll")
-
                 print("Good: {}||ID: {} || x: {}".format(sum(self.fitness[self.quansat]),self.quansat,  self.pop[self.quansat].x_vnf), file = file)
                 print("Gen: {}::::len_fitnis={}||len-pop={}".format(gen + 1, len(self.fitness), len(self.pop)), file=file)
                 for good_fitness in self.dominant_set:
@@ -118,7 +115,6 @@ class MOTLBO:
                 if self.fitness[sol1_id][0] >= self.fitness[sol2_id][0] and self.fitness[sol1_id][1] >= self.fitness[sol2_id][1] and self.fitness[sol1_id][2] >= self.fitness[sol2_id][2]:
                     if self.fitness[sol1_id] == self.fitness[sol2_id]:
                         while(1):
-                            print("sol1 = sol2")
                             new_net = copy.deepcopy(self.network)
                             new_sfc = copy.deepcopy(self.sfc_set)
                             init = Solution(new_net, new_sfc)
@@ -137,12 +133,6 @@ class MOTLBO:
                                     del new_net
                                     del new_sfc
                     else:
-                        if self.quansat == sol1_id:
-                            print("quansat id = {}|| x = {}".format(sol1_id, self.pop[sol1_id].x))
-                            print("fitness_quan sat =", self.fitness[self.quansat])
-                            print("sol2 id : {}|| x = {}".format(sol2_id, self.pop[sol2_id].x))
-                            print("fitness sol2=", self.fitness[sol2_id])
-
                         need_improve_tmp.append(sol1_id)
                         break
 
@@ -187,14 +177,8 @@ class MOTLBO:
                             # kiem tra xem co tot hon student hien tai ko
                             yes = self._thaythe(stu, new_student)
                             if yes:
-                                if self.quansat == student:
-                                    print("thay doi o tech: id:", self.quansat)
-                                    print("x1:", self.pop[student].x)
-                    
                                 stu = new_student
 
-                                if self.quansat == student:
-                                    print("x2:", self.pop[student].x)
 
                   
 
@@ -220,21 +204,14 @@ class MOTLBO:
                                 # kiem tra xem co tot hon student hien tai ko
                                 yes = self._thaythe(stu1, stu_new)
                                 if yes:
-                                    if self.quansat == student1:
-                                        print("thay doi o lear id:", self.quansat)
-                                        print("x1:", self.pop[student1].x)
-                    
                                     stu1 = stu_new
-                                    if self.quansat == student1:
-                                        print("x2:", self.pop[student1].x)
+                                  
 
 
         
     # loai bo va them vao ca the moi
     def remove_phase(self):
         for sol in self.expulsion_set:
-            if self.quansat == sol:
-                print("loi sieu to")
             while(1):
                 new_net = copy.deepcopy(self.network)
                 new_sfc = copy.deepcopy(self.sfc_set)
@@ -306,7 +283,6 @@ class MOTLBO:
         for sol1 in range(0, len(self.pop)):
             for sol2 in range(sol1 +1 ,len(self.pop)):
                 if self.fitness[sol1] == self.fitness[sol2]:
-                     print("trung lap == tung lap")
                      while(1):
                         new_net = copy.deepcopy(self.network)
                         new_sfc = copy.deepcopy(self.sfc_set)

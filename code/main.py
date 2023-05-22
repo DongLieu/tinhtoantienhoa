@@ -1,22 +1,14 @@
 from MOTLBO import *
 
 NAME_FOLDER = "nsf_uniform_1"
-
-PATH_FOLDER = "/Users/duongdong/tinhtoantienhoa/dataset/"
-
-PATH_INPUT = PATH_FOLDER + NAME_FOLDER + "/input.txt"
-
-PATH_REQUEST10 = PATH_FOLDER + NAME_FOLDER + "/request10.txt"
-PATH_REQUEST20 = PATH_FOLDER + NAME_FOLDER + "/request20.txt"
-PATH_REQUEST30 = PATH_FOLDER + NAME_FOLDER + "/request30.txt"
+REQUEST = 10
 
 N_POP = 100
 GEN = 1000
 NUM_REMOVE = 20
 
-motlbo = MOTLBO(N_POP, GEN, NUM_REMOVE, PATH_INPUT, PATH_REQUEST10)
-with open('output.txt', 'w') as file:
-    print()
+motlbo = MOTLBO(N_POP, GEN, NUM_REMOVE, NAME_FOLDER, REQUEST)
+
 motlbo.run()
 
 # motlbo.initialize_population()

@@ -12,9 +12,11 @@ from graph_vnf import *
 
 from Solution import *
 class MOTLBO:
-    def __init__(self, N, Gen, num_remove, path_input, path_request) -> None:
-        self.network = Network(path_input)
-        self.sfc_set = SFC_SET(path_request)
+    def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
+        self.path_output = "/Users/duongdong/tinhtoantienhoa/output/" + name_folder + "/request" + str(request) + ".txt"
+
+        self.network = Network("/Users/duongdong/tinhtoantienhoa/dataset/" + name_folder + "/input.txt")
+        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/dataset/" + name_folder + "/request" + str(request) + ".txt")
         self.sfc_set.create_global_info(self.network)
         self.network.create_constraints(self.sfc_set)
 
@@ -35,6 +37,9 @@ class MOTLBO:
         self.quansat = 0
 
     def run(self):
+        with open(self.path_output, 'w') as file:
+            file.truncate(0)
+
         # khoi tao
         self.initialize_population()
         # tinh gia tri ham muc tieu
@@ -48,6 +53,8 @@ class MOTLBO:
             self.teaching_phase()
             # hoc
             self.learning_phase()
+            # hoi thao
+            self.seminar_phase()
             # loai bo va them vao ca the moi
             self.remove_phase()
             # dinh tuyen, tinh gia tri
@@ -61,7 +68,7 @@ class MOTLBO:
                 if sum(self.fitness[good_fitness]) < sum(self.fitness[self.quansat]):
                     self.quansat = good_fitness
             
-            with open('output.txt', 'a') as file:
+            with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
                 print("Good: {}||ID: {} || x: {}".format(sum(self.fitness[self.quansat]),self.quansat,  self.pop[self.quansat].x_vnf), file = file)
                 print("Gen: {}::::len_fitnis={}||len-pop={}".format(gen + 1, len(self.fitness), len(self.pop)), file=file)
@@ -96,6 +103,7 @@ class MOTLBO:
                 else:
                     del new_netw
                     del new_sfc_set
+
     #  tinh gia tri ham muc tieu cho moi pop[i]
     def evaluate_population(self):
         fitniss_tmp = []
@@ -178,10 +186,6 @@ class MOTLBO:
                             yes = self._thaythe(stu, new_student)
                             if yes:
                                 stu = new_student
-
-
-                  
-
         
     def learning_phase(self):
         for student1 in self.need_improve:
@@ -204,11 +208,27 @@ class MOTLBO:
                                 # kiem tra xem co tot hon student hien tai ko
                                 yes = self._thaythe(stu1, stu_new)
                                 if yes:
-                                    stu1 = stu_new
-                                  
+                                    stu1 = stu_new                              
+    # hoithao
+    def seminar_phase(self):
+        for teacher1 in self.dominant_set:
+            for teacher2 in self.dominant_set:
+                if teacher1 == teacher2:
+                    continue
+                else:
+                    tea1 = self.pop[teacher1]
+                    tea2 = self.pop[teacher2]
 
-
-        
+                    new_tea, success = self._teacher_teaching_student(tea1, tea2)
+                    if success:
+                        if self._sol_in_pop(new_tea):
+                            continue
+                        else:
+                            # kiem tra xem co tot hon teacher hien tai ko
+                            yes = self._thaythe(tea1, new_tea)
+                            if yes:
+                                tea1 = new_tea
+                                
     # loai bo va them vao ca the moi
     def remove_phase(self):
         for sol in self.expulsion_set:
@@ -273,12 +293,13 @@ class MOTLBO:
             return True
         else:
             return False
+        
     def _sol_in_pop(self, new_sol: Solution)->bool:
         for sol in self.pop:
             if new_sol.x == sol.x:
                 return True
-        
         return False
+    
     def trung_sol(self):
         for sol1 in range(0, len(self.pop)):
             for sol2 in range(sol1 +1 ,len(self.pop)):
@@ -309,13 +330,13 @@ class MOTLBO:
         
 # NAME_FOLDER = "nsf_uniform_1"
 
-# PATH_FOLDER = "/Users/duongdong/tinhtoantienhoa/dataset/"
+# "/Users/duongdong/tinhtoantienhoa/dataset/" = "/Users/duongdong/tinhtoantienhoa/dataset/"
 
-# path_input = PATH_FOLDER + NAME_FOLDER + "/input.txt"
+# path_input = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/input.txt"
 
-# path_request10 = PATH_FOLDER + NAME_FOLDER + "/request10.txt"
-# path_request20 = PATH_FOLDER + NAME_FOLDER + "/request20.txt"
-# path_request30 = PATH_FOLDER + NAME_FOLDER + "/request30.txt"
+# path_request10 = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/request10.txt"
+# path_request20 = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/request20.txt"
+# path_request30 = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/request30.txt"
 
 # net = Network(path_input)
 # sfc = SFC_SET(path_request10)

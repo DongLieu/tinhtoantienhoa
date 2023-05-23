@@ -13,10 +13,10 @@ from graph_vnf import *
 from Solution import *
 class MOTLBO:
     def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
-        self.path_output = "/Users/duongdong/tinhtoantienhoa/output/" + name_folder + "/request" + str(request) + ".txt"
+        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + ".txt"
 
-        self.network = Network("/Users/duongdong/tinhtoantienhoa/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/dataset/" + name_folder + "/request" + str(request) + ".txt")
+        self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
+        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")
         self.sfc_set.create_global_info(self.network)
         self.network.create_constraints(self.sfc_set)
 
@@ -331,13 +331,13 @@ class MOTLBO:
         
 # NAME_FOLDER = "nsf_uniform_1"
 
-# "/Users/duongdong/tinhtoantienhoa/dataset/" = "/Users/duongdong/tinhtoantienhoa/dataset/"
+# "/Users/duongdong/tinhtoantienhoa/code/dataset/" = "/Users/duongdong/tinhtoantienhoa/code/dataset/"
 
-# path_input = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/input.txt"
+# path_input = "/Users/duongdong/tinhtoantienhoa/code/dataset/" + NAME_FOLDER + "/input.txt"
 
-# path_request10 = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/request10.txt"
-# path_request20 = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/request20.txt"
-# path_request30 = "/Users/duongdong/tinhtoantienhoa/dataset/" + NAME_FOLDER + "/request30.txt"
+# path_request10 = "/Users/duongdong/tinhtoantienhoa/code/dataset/" + NAME_FOLDER + "/request10.txt"
+# path_request20 = "/Users/duongdong/tinhtoantienhoa/code/dataset/" + NAME_FOLDER + "/request20.txt"
+# path_request30 = "/Users/duongdong/tinhtoantienhoa/code/dataset/" + NAME_FOLDER + "/request30.txt"
 
 # net = Network(path_input)
 # sfc = SFC_SET(path_request10)

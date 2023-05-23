@@ -70,8 +70,9 @@ class MOTLBO:
             
             with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
+                print("Gen: {}".format(gen + 1), file=file)
                 print("Good: {}||ID: {} || x: {}".format(sum(self.fitness[self.quansat]),self.quansat,  self.pop[self.quansat].x_vnf), file = file)
-                print("Gen: {}::::len_fitnis={}||len-pop={}".format(gen + 1, len(self.fitness), len(self.pop)), file=file)
+                
                 for good_fitness in self.dominant_set:
                     print("{}: {}".format(sum(self.fitness[good_fitness]), self.fitness[good_fitness]), file=file)
                 print("", file=file)  # In một dòng trống

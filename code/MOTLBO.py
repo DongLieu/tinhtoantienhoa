@@ -2,13 +2,8 @@ import copy
 from typing import Tuple
 from tqdm import tqdm
 
-
-from graph_link import *
 from graph_network import *
-from graph_node import *
-from graph_sfc import *
 from graph_sfc_set import *
-from graph_vnf import *
 
 from Solution import *
 class MOTLBO:

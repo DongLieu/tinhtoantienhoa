@@ -8,7 +8,7 @@ from graph_sfc_set import *
 from Solution import *
 class MOTLBO:
     def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
-        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + ".txt"
+        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_MOTLBO.txt"
 
         self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
         self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")

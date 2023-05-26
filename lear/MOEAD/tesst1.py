@@ -38,6 +38,8 @@ class MOEAD:
         parents = []
         ranked_population = sorted(population, key=lambda x: (x[1], x[2], x[3]))
         parents = ranked_population[:num_parents]
+        print("-----")
+        print(parents)
         return parents
 
     def crossover(self, parent1, parent2):
@@ -64,13 +66,13 @@ class MOEAD:
         population = self.initialize_population()
         for _ in range(self.num_generations):
             evaluated_population = self.evaluate_population(population)
-            parents = self.select_parents(evaluated_population, self.population_size)
+            parents = self.select_parents(evaluated_population, 6)
             population = self.create_offspring(parents)
         evaluated_population = self.evaluate_population(population)
         return evaluated_population
 
 # Chạy thuật toán MOEA/D và in kết quả
-population_size = 10
+population_size = 100
 num_generations = 5000
 crossover_rate = 0.8
 mutation_rate = 0.1
@@ -78,10 +80,10 @@ mutation_rate = 0.1
 moead = MOEAD(population_size, num_generations, crossover_rate, mutation_rate)
 results = moead.solve()
 
-for individual in results:
-    x, f1, f2, f3 = individual
-    print("x =", x)
-    print("f1 =", f1)
-    print("f2 =", f2)
-    print("f3 =", f3)
-    print("-----------")
+# for individual in results:
+#     x, f1, f2, f3 = individual
+#     print("x =", x)
+#     print("f1 =", f1)
+#     print("f2 =", f2)
+#     print("f3 =", f3)
+#     print("-----------")

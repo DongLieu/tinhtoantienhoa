@@ -170,9 +170,9 @@ class MOEAD:
                 # Ghi các lời gọi print vào file
                 print("Gen: {}".format(gen + 1), file=file)
                 for sol_id in range(self.n_pop):
-                    weights = self.weight[sol_id]
-                    rounded_weights = [round(w, 5) for w in weights]
-                    print("     fitness:{} | w: {}".format(round(self.fitness[sol_id], 5), rounded_weights), file=file)
+                    # weights = self.weight[sol_id]
+                    # rounded_weights = [round(w, 5) for w in weights]
+                    print("     fitness:{} | w: {}".format(self.fitness[sol_id], self.weight[sol_id]), file=file)
                 print("", file=file)
 
         return

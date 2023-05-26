@@ -1,5 +1,5 @@
 import copy
-from typing import Tuple
+from typing import List, Tuple
 from tqdm import tqdm
 
 from graph_network import *
@@ -52,7 +52,7 @@ class MOEAD:
             # chon ngau nhien ca the trong quan the de sinh san
             rand_sol = random.randint(0, self.n_pop - 1)
             # sinh san tu ca the duoc chon(laighep-dotbien)
-            new_sol, ok = self.reproductionss(rand_sol)
+            new_sols, ok = self.reproductionss(rand_sol)
             if not ok:
                 with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
@@ -60,10 +60,10 @@ class MOEAD:
                     print("     continue", file=file)
                     print("", file=file)
                 continue
-
-            sol_neis = self.B[rand_sol]
-            for sol_nei in sol_neis:
-                self.new_sol_is_good_to_update(sol_nei, new_sol)
+            for new_sol in new_sols:
+                sol_neis = self.B[rand_sol]
+                for sol_nei in sol_neis:
+                    self.new_sol_is_good_to_update(sol_nei, new_sol)
             self.print_the_result_in_generation(gen)
             
             
@@ -144,7 +144,7 @@ class MOEAD:
                 self.z[i] = fit_sol[i]
 
 
-    def reproductionss(self, sol_id)-> Tuple[Solution, bool]:
+    def reproductionss(self, sol_id)-> Tuple[List[Solution], bool]:
         random_laighep = random.random()
 
         if random_laighep < self.CR:
@@ -152,7 +152,9 @@ class MOEAD:
             return self._laighep(sol_id)
         else:
             # dot bien
-            return self._dotbien(sol_id)
+            sol, err = self._dotbien(sol_id)
+            sol_new = [sol]
+            return sol_new, err
     
     def new_sol_is_good_to_update(self, sol_id, sol_new: Solution):
         fitness = self._obj_func(sol_new)
@@ -186,7 +188,7 @@ class MOEAD:
     def _dotbien(self, sol_id)-> Tuple[Solution, bool]:
         sol_dad = self.pop[sol_id]
         num_nodes = len(sol_dad.x_vnf)
-
+        # dot bien thay doi vnf
         i = 0
         while(i<10):
             x = copy.deepcopy(sol_dad.x)
@@ -214,6 +216,79 @@ class MOEAD:
         
         return None, False
     
-    def _laighep(self, sol_id)-> Tuple[Solution, bool]:
+    def _laighep(self, sol_id)-> Tuple[List[Solution], bool]:
+        neis = self.B[sol_id]
+        num_dad = len(neis)
+        dads = []
+        for nei in neis:
+            dads.append(self.pop[nei])
+
+        numnode = len(dads[0].x_vnf)
+
+        # ba diem cat
+        diemcats = []
+        khoangcachcat = int(numnode/num_dad)
+        for i in range(1, num_dad):
+            diemcats.append(i*khoangcachcat)
+        # print(diemcats)
+        
+        x_dict = {}
+
+        for diemcat in range (len(diemcats) + 1):
+            x_diemcat = []
+            for dad in dads:
+
+                if diemcat == 0:
+                    x_sv = dad.x[:diemcats[diemcat]]    
+                    num_vnf = sum(x_sv)
+                    vnf = dad.x[numnode: numnode+num_vnf]
+                    x_diemcat.append([x_sv, vnf])
+
+                elif diemcat == len(diemcats):
+                    x_sv = dad.x[diemcats[diemcat - 1]: numnode]
+                    num_vnf = sum(x_sv)
+
+                    num_vnf_truoc = sum(dad.x[:diemcats[diemcat - 1]])
+                    vnf = dad.x[numnode + num_vnf_truoc: numnode + num_vnf_truoc + num_vnf]
+                    x_diemcat.append([x_sv, vnf])
+                    
+
+                else:
+                    x_sv = dad.x[diemcats[diemcat - 1]: diemcats[diemcat]]
+                    num_vnf = sum(x_sv)
+
+                    num_vnf_truoc = sum(dad.x[:diemcats[diemcat - 1]])
+                    vnf = dad.x[numnode + num_vnf_truoc: numnode + num_vnf_truoc + num_vnf]
+                    x_diemcat.append([x_sv, vnf])
+            
+            x_dict[diemcat] = x_diemcat
+
+        for i, j in x_dict.items():
+            print(j)
+
+    
+
+        print("======")
+        x = []
+        for i in range(num_dad):
+            x_tmp = []
+            x_tmp.append(x_dict[0][i])
+            i_2 = i+1
+            if i_2 > 2:
+                i_2 = i_2 - 2
+            x_tmp.append(x_dict[1][i_2])
+            i_3 = i+2
+            if i_3 > 2:
+                i_3 = i_3 - 2
+            x_tmp.append(x_dict[2][i_3])
+
+            x.append(x_tmp)
+                
+
+
+        for i in x:
+            print(i)
+
+        return dads, True
 
         return None, False

@@ -12,14 +12,18 @@ NUM_REMOVE = 20
 # motlbo.run()
 
 moead = MOEAD(N_POP, GEN, NAME_FOLDER, REQUEST)
-moead.run()
-# moead.initialization_weight()
-# moead.neighboring_Solutions()
-# moead.initialize_population()
-# moead.evaluate_population()
+# moead.run()
+moead.initialization_weight()
+moead.neighboring_Solutions()
+moead.initialize_population()
+moead.evaluate_population()
+
 
 # print(moead.pop[0].x)
-# sol,yes = moead._dotbien(0)
+for i in moead.B[0]:
+    print(moead.pop[i].x)
+print("----")
+sol,yes = moead._laighep(0)
 # if yes:
 #     print(sol.x)
 # else:

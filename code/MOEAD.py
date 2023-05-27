@@ -56,7 +56,7 @@ class MOEAD:
             if not ok:
                 with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
-                    print("Gen: {}".format(gen + 1), file=file)
+                    print("Gen:new {}".format(gen + 1), file=file)
                     print("     continue", file=file)
                     print("", file=file)
                 continue
@@ -174,7 +174,7 @@ class MOEAD:
                 for sol_id in range(self.n_pop):
                     # weights = self.weight[sol_id]
                     # rounded_weights = [round(w, 5) for w in weights]
-                    print("     fitness:{} | w: {}".format(self.fitness[sol_id], self.weight[sol_id]), file=file)
+                    print("     id: {}| fitness:{} | w: {}".format(sol_id,self.fitness[sol_id], self.weight[sol_id]), file=file)
                 print("", file=file)
 
         return
@@ -224,14 +224,11 @@ class MOEAD:
             dads.append(self.pop[nei])
 
         numnode = len(dads[0].x_vnf)
-
         # ba diem cat
         diemcats = []
         khoangcachcat = int(numnode/num_dad)
         for i in range(1, num_dad):
             diemcats.append(i*khoangcachcat)
-        # print(diemcats)
-        
         x_dict = {}
 
         for diemcat in range (len(diemcats) + 1):
@@ -263,32 +260,52 @@ class MOEAD:
             
             x_dict[diemcat] = x_diemcat
 
-        for i, j in x_dict.items():
-            print(j)
-
-    
-
-        print("======")
-        x = []
+        x_vnf = []
         for i in range(num_dad):
             x_tmp = []
-            x_tmp.append(x_dict[0][i])
-            i_2 = i+1
-            if i_2 > 2:
-                i_2 = i_2 - 2
-            x_tmp.append(x_dict[1][i_2])
-            i_3 = i+2
-            if i_3 > 2:
-                i_3 = i_3 - 2
-            x_tmp.append(x_dict[2][i_3])
+            for j in range(num_dad):
+                if i == j:
+                    continue
+                for k in range(num_dad):
+                    if k == j or k == i:
+                        continue
+                    else:
+                        x_tmp.append(x_dict[0][i])
+                        x_tmp.append(x_dict[1][j])
+                        x_tmp.append(x_dict[2][k])
+                        x_vnf.append(x_tmp)
+                        x_tmp = []
 
-            x.append(x_tmp)
-                
+        x = []
+        for sol_x in x_vnf:
+            x_tpm = []
+            x_tpm += (sol_x[0][0])
+            x_tpm += (sol_x[1][0])
+            x_tpm +=(sol_x[2][0])
 
+            x_tpm+=(sol_x[0][1])
+            x_tpm+=(sol_x[1][1])
+            x_tpm+=(sol_x[2][1])
 
-        for i in x:
-            print(i)
+            x.append(x_tpm)
 
-        return dads, True
+        new_sols = []
+        for x_sol in x:
+            new_net = copy.deepcopy(self.network)
+            new_sfc = copy.deepcopy(self.sfc_set)
+            init = Solution(new_net, new_sfc)
 
-        return None, False
+            init.x = x_sol
+            if self._sol_in_pop(init):
+                del new_net
+                del new_sfc
+            else:
+                init.tinh_x_vnf()
+                suc = init.kichhoatnode_dinhtuyen()
+                if suc:
+                    new_sols.append(init)
+            
+        if len(new_sols) != 0:
+            return new_sols, True
+        else:
+            return None, False

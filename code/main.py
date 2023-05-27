@@ -1,62 +1,58 @@
 from MOTLBO import *
+from MOEAD import *
 
 NAME_FOLDER = "nsf_uniform_1"
+REQUEST = 10
 
-PATH_FOLDER = "/Users/duongdong/tinhtoantienhoa/dataset/"
-
-PATH_INPUT = PATH_FOLDER + NAME_FOLDER + "/input.txt"
-
-PATH_REQUEST10 = PATH_FOLDER + NAME_FOLDER + "/request10.txt"
-PATH_REQUEST20 = PATH_FOLDER + NAME_FOLDER + "/request20.txt"
-PATH_REQUEST30 = PATH_FOLDER + NAME_FOLDER + "/request30.txt"
-
-N_POP = 100
-GEN = 1000
+N_POP = 20
+GEN = 10000
 NUM_REMOVE = 20
 
-motlbo = MOTLBO(N_POP, GEN, NUM_REMOVE, PATH_INPUT, PATH_REQUEST10)
-with open('output.txt', 'w') as file:
-    print()
-motlbo.run()
+# motlbo = MOTLBO(N_POP, GEN, NUM_REMOVE, NAME_FOLDER, REQUEST)
+# motlbo.run()
 
-# motlbo.initialize_population()
-# motlbo.evaluate_population()
-# motlbo.good_finess_and_expulsion()
-
-# print(len(motlbo.need_improve))
-
-# print(motlbo.fitness[0])
-# print(motlbo.fitness[1])
-# print(motlbo.pop[0].vnf_x)
-# print(motlbo.fitness[0])
-# print(motlbo.fitness[0][0])
-# print(motlbo.fitness[0][1])
-# print(motlbo.fitness[0][2])
-# print("-----------")
-# print(len(motlbo.dominant_set))
-# print(motlbo.dominant_set)
-# x_teacher = motlbo.pop[0]
-# x_student = motlbo.pop[1]
-# print(x_student.x)
-# print(x_student.delay_servers_and_links_use)
-# print("-----------")
-
-
-# new_student, success = motlbo._teacher_teaching_student(x_teacher, x_student)
-# if success:
-#     print("ok")
-#     x_student = new_student
-
-# print(new_student.x)
-# print(new_student.delay_servers_and_links_use)
-# print("-----------")
-# print(x_student.x)
-# print(x_student.delay_servers_and_links_use)
+moead = MOEAD(N_POP, GEN, NAME_FOLDER, REQUEST)
+moead.run()
+# moead.initialization_weight()
+# moead.neighboring_Solutions()
+# moead.initialize_population()
+# moead.evaluate_population()
 
 
 
-# s = len(motlbo.pop[0].x_vnf)
-# print(s)
-# print("-----------0000")
-# print(len(motlbo.expulsion_set))
-# print(motlbo.expulsion_set)
+
+# sol,yes = moead._laighep(0)
+# if yes:
+#     print(sol.x)
+# else:
+#     print(sol)
+# # print(moead.B)
+# print("------------")
+# for i in moead.B:
+#     print(i)
+# print("------")
+# for i in range(moead.n_pop):
+#     print("fit={}|                 FV={}|          w={}| ".format(moead._obj_func(moead.pop[i]), moead.fitness[i], moead.weight[i]))
+
+
+# import multiprocessing
+
+# def function1():
+#     # Thực hiện công việc của hàm 1
+
+# def function2():
+#     # Thực hiện công việc của hàm 2
+
+# # Tạo các tiến trình (processes) cho từng hàm
+# process1 = multiprocessing.Process(target=function1)
+# process2 = multiprocessing.Process(target=function2)
+
+# # Khởi động các tiến trình
+# process1.start()
+# process2.start()
+
+# # Đợi cho tất cả các tiến trình hoàn thành
+# process1.join()
+# process2.join()
+
+# # Tiếp tục thực hiện các công việc khác

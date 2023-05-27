@@ -4,7 +4,6 @@ from collections import deque
 from graph_network import *
 from graph_sfc_set import *
 
-
 class Solution():
     def __init__(self, net: Network, sfcs: SFC_SET) -> None:
         self.net = net
@@ -17,8 +16,6 @@ class Solution():
         
         self.vnf_requests = []
         self._search_vnf_requests()
-
-
 
         #khi dinh tuyen moi tinh toan 
         # dinh tuyen
@@ -37,7 +34,6 @@ class Solution():
 # max cost vnfs = chi phi khi kich hoat taat ca vnfs treen tat ca server
         self.max_cost_vnfs = net.max_cost_vnfs
 
-        
     def init_random(self):
         x = []
         for i in range(self.net.num_nodes):

@@ -54,12 +54,14 @@ class MOEAD:
             # sinh san tu ca the duoc chon(laighep-dotbien)
             new_sols, ok = self.reproductionss(rand_sol)
             if not ok:
+                
                 with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
                     print("Gen:new {}".format(gen + 1), file=file)
-                    print("     continue", file=file)
+                    print("     continue len = {}".format(len(new_sols)), file=file)
                     print("", file=file)
                 continue
+
             for new_sol in new_sols:
                 sol_neis = self.B[rand_sol]
                 for sol_nei in sol_neis:
@@ -150,11 +152,11 @@ class MOEAD:
         if random_laighep < self.CR:
             # lai ghep
             return self._laighep(sol_id)
+
         else:
             # dot bien
-            sol, err = self._dotbien(sol_id)
-            sol_new = [sol]
-            return sol_new, err
+            return self._dotbien(sol_id)
+
     
     def new_sol_is_good_to_update(self, sol_id, sol_new: Solution):
         fitness = self._obj_func(sol_new)
@@ -185,34 +187,30 @@ class MOEAD:
         z = 1 - x - y
         return [x, y, z]
     
-    def _dotbien(self, sol_id)-> Tuple[Solution, bool]:
-        sol_dad = self.pop[sol_id]
-        num_nodes = len(sol_dad.x_vnf)
-        # dot bien thay doi vnf
+    def _dotbien(self, sol_id)-> Tuple[List[Solution], bool]:
+        num_sols = random.randint(1, self.n_pop)
+        sol_sons = []
         i = 0
-        while(i<10):
-            x = copy.deepcopy(sol_dad.x)
-            i += 1
+        while(i < num_sols):
+            new_net = copy.deepcopy(self.network)
+            new_sfc = copy.deepcopy(self.sfc_set)
+            init = Solution(new_net, new_sfc)
 
-            id_vnf_hientai = random.randint(num_nodes, len(x) - 1)
-            type_vnf_hientai = x[id_vnf_hientai]
+            init.init_random()
+            if self._sol_in_pop(init):
+                del new_net
+                del new_sfc
+            else:
+                suc = init.kichhoatnode_dinhtuyen()
 
-            type_vnf_dotbien = random.randint(0, self.network.num_type_vnfs - 1)
-            if type_vnf_dotbien != type_vnf_hientai:
-                x[id_vnf_hientai] = type_vnf_dotbien
-
-                new_netw = copy.deepcopy(self.network)
-                new_sfc_set = copy.deepcopy(self.sfc_set)
-
-                y = Solution(new_netw, new_sfc_set)
-                y.x = x
-                y.tinh_x_vnf()
-                success = y.kichhoatnode_dinhtuyen()
-                if success:
-                    return y, True
+                if suc:
+                    i += 1
+                    sol_sons.append(init)
                 else:
-                    del new_netw
-                    del new_sfc_set
+                    del new_net
+                    del new_sfc
+        if len(sol_sons) != 0:
+            return sol_sons, True
         
         return None, False
     
@@ -308,4 +306,4 @@ class MOEAD:
         if len(new_sols) != 0:
             return new_sols, True
         else:
-            return None, False
+            return new_sols, False

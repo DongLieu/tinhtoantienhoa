@@ -23,6 +23,18 @@ class NSGA2:
         self.pop = []
         self.fitness = []
 
+     # Ham muc tieu:
+    def _obj_func(self,sol: Solution):
+        fitness = []
+        fitness.append(sol.delay_servers_and_links_use/(sol.max_delay_links + sol.max_delay_servers))
+        fitness.append(sol.cost_servers_use/sol.max_cost_servers)
+        fitness.append(sol.cost_vnfs_use/sol.max_cost_vnfs)
+
+        return fitness
+    
+    def run(self):
+        self.initialize_population()
+        self.evaluate_population()
     # Hàm tạo quần thể ban đầu
     def initialize_population(self):
         while(len(self.pop) != self.n_pop):

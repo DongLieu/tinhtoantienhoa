@@ -1,6 +1,7 @@
 import copy
 from typing import Tuple
 from tqdm import tqdm
+import math
 
 from graph_network import *
 from graph_sfc_set import *
@@ -42,13 +43,11 @@ class NSGA2:
         # tinh gia tri ham muc tieu
         self.evaluate_population()
         for gen in range(self.Gen):
-            # Sắp xếp không chủ quan: Sử dụng sắp xếp không chủ quan để phân 
-            # loại các cá thể thành các tầng Pareto front. Các tầng Pareto front 
-            # càng cao thì càng tốt.
+            # Sắp xếp Các tầng Pareto front 
             self.classify_individuals_Pareto_front_layers()
-            # chon loc
+            # chon loc(chon cac ca the giu lai, cac ca the phai thay the)
             self.selective()
-            # sinh san
+            # sinh san(cac ca the co rank=0 lai ghep voi nhau va rank = 1)
             self.reproductionss()
 
 
@@ -72,7 +71,7 @@ class NSGA2:
                     del new_netw
                     del new_sfc_set
     
-    #  tinh gia tri ham muc tieu cho moi pop[i]
+    # Tinh gia tri ham muc tieu cho moi pop[i]
     def evaluate_population(self):
         fitniss_tmp = []
         for solution in self.pop:
@@ -109,25 +108,161 @@ class NSGA2:
 
 
     def classify_individuals_Pareto_front_layers(self):
-        rank0 =[]
+        self._fast_nondominated_sort()
+
+    def selective(self):
+        # chon ra cac ca the khong tot
+        tmp_expulsion = []
+        found = 0
+
+        count = 0
+        rank_choce = -1
+        num_expulsion = -1
+
+        for rank in self.rank.keys():
+            count += len(self.rank[rank])
+            
+            if (count > (self.n_pop - self.num_remove)) and (found == 0):
+                rank_choce = rank
+                num_expulsion = count - (self.n_pop - self.num_remove)
+                found = 1
+                continue
+
+            if (count > self.num_remove) and (found == 1):
+                tmp_expulsion = tmp_expulsion + self.rank[rank]
+        print("rankchoce = ", rank_choce)
+        print("num_exxx = ", num_expulsion)
+
+        expulsion_add = self._chooce_on_crowding_distance(rank_choce, num_expulsion)
+
+        tmp_expulsion = tmp_expulsion + expulsion_add
+        self.expulsion_set = tmp_expulsion
+    
+    def _chooce_on_crowding_distance(self, rank_chooce, num_expulsion):
+        expulsion = []
+
+        if num_expulsion == 0:
+            return expulsion
+        if num_expulsion <= 3:
+            z = [-1, -1, -1]
+            for sol_id in self.rank[rank_chooce]:
+                if (self.fitness[sol_id][0] <  self.fitness[z[0]][0]) or (z[0] == -1):
+                    z[0] = sol_id
+                if (self.fitness[sol_id][1] <  self.fitness[z[1]][1]) or (z[1] == -1):
+                    z[1] = sol_id
+                if (self.fitness[sol_id][2] <  self.fitness[z[2]][2]) or (z[2] == -1):
+                    z[2] = sol_id
+            
+            for i in range(num_expulsion):
+                element_to_remove = random.choice(z)
+                expulsion.append(element_to_remove)
+                z.remove(element_to_remove)
+            return expulsion
+        
+        z = [-1, -1, -1]
+        for sol_id in self.rank[rank_chooce]:
+            if (self.fitness[sol_id][0] <  self.fitness[z[0]][0]) or (z[0] == -1):
+                z[0] = sol_id
+            if (self.fitness[sol_id][1] <  self.fitness[z[1]][1]) or (z[1] == -1):
+                z[1] = sol_id
+            if (self.fitness[sol_id][2] <  self.fitness[z[2]][2]) or (z[2] == -1):
+                z[2] = sol_id
+        for i in range(3):
+                element_to_remove = random.choice(z)
+                expulsion.append(element_to_remove)
+                z.remove(element_to_remove)
+        num_expulsion -= 3
+
+
+        distances = []
+        for sol_id1 in self.rank[rank_chooce]:
+            if sol_id1 in expulsion: continue
+
+            min_1_id = -1
+            min_2_id = -1
+            min = 999
+            for sol_id2 in self.rank[rank_chooce]:
+                if sol_id1 == sol_id2:
+                    continue
+
+                dis = self._distance_fit_sol(sol_id1, sol_id2)
+                if dis < min:
+                    min_2_id = min_1_id
+
+                    min = dis
+                    min_1_id = sol_id2
+
+            distance = self._distance_fit_sol(min_1_id, min_2_id)       
+            distances.append([sol_id1, distance]) 
+
+        sorted_lose = sorted(distances, key=lambda x: x[1])
+        expulsion_set_add = [sol_lose[0] for sol_lose in sorted_lose[:num_expulsion]]
+        expulsion = expulsion + expulsion_set_add
+
+        return expulsion
+
+        
+
+        
+
+                
+
+
+
+                
+
+        
+    
+    def reproductionss(self):
+        return
+
+    def _distance_fit_sol(self, sol1_id, sol2_id):
+        a = sum((x-y)**2 for x,y in zip(self.fitness[sol1_id],self.fitness[sol2_id]))
+        return math.sqrt(a)
+        
+    def _fast_nondominated_sort(self):
+        # mảng lưu trữ số lượng cá thể không dominated
+        dominated_count = [0] * self.n_pop
+
         for i in range(self.n_pop):
-            i_tmp = 0
+            i_tmp = []
+
             for j in range(self.n_pop):
-                if i == j or (j in rank0): continue
+                if i == j: continue
 
                 if self._dominates(i, j):
-                    i_tmp = 1
-                    break
-            if i_tmp == 0:
-                rank0.append(i)
-        self.rank[0] = rank0
-
+                    # so ca the troi hon ca the i
+                    dominated_count[i] += 1
+                    i_tmp.append(j)
+        # Xác định tầng Pareto front đầu tiên
+        front = []
+        for i in range(self.n_pop):
+            if dominated_count[i] == 0:
+                front.append(i)
+                dominated_count[i] = -1
+        # Lặp lại quá trình xác định các tầng Pareto front tiếp theo
+        rank = 0
+        while len(front) > 0:
+            self.rank[rank] = front
+            next_front = []
+            for i in range(len(front)):
+                for j in range(self.n_pop):
+                    if dominated_count[j] > 0:
+                        dominated_count[j] -= 1
+                        if dominated_count[j] == 0:
+                            next_front.append(j)
+                            dominated_count[j] = -1
+            front = next_front
+            rank += 1
+        
+            
                     
+
     def _dominates(self, sol1, sol2) ->bool:
         #True  neu sol1 dominates sol2
-        if self.fitness[sol1][0] <= self.fitness[sol2][0] and\
-            self.fitness[sol1][1] <= self.fitness[sol2][1] and\
-            self.fitness[sol1][2] <= self.fitness[sol2][2]:
+        if self.fitness[sol1][0] >= self.fitness[sol2][0] and\
+            self.fitness[sol1][1] >= self.fitness[sol2][1] and\
+            self.fitness[sol1][2] >= self.fitness[sol2][2]:
             return True
         else:
             return False

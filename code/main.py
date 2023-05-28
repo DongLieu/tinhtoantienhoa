@@ -30,6 +30,7 @@ nsga2.initialize_population()
 
 nsga2.evaluate_population()
 nsga2.classify_individuals_Pareto_front_layers()
+nsga2.print_gen(0)
 
 for i in nsga2.rank.values():
     print(i)

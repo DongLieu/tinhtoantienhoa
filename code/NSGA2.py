@@ -45,10 +45,14 @@ class NSGA2:
         for gen in range(self.Gen):
             # Sắp xếp Các tầng Pareto front 
             self.classify_individuals_Pareto_front_layers()
+            # print Keets qua
+            self.print_gen(gen)
             # chon loc(chon cac ca the giu lai, cac ca the phai thay the)
             self.selective()
-            # sinh san(cac ca the co rank=0 lai ghep voi nhau va rank = 1)
+            # sinh san(cac ca the co rank=0 lai ghep voi nhau va rank = 1) 
             self.reproductionss()
+            # tinh gia tri ham muc tieu
+            self.evaluate_population()
 
 
     # Hàm tạo quần thể ban đầu
@@ -121,7 +125,7 @@ class NSGA2:
 
         for rank in self.rank.keys():
             count += len(self.rank[rank])
-            
+
             if (count > (self.n_pop - self.num_remove)) and (found == 0):
                 rank_choce = rank
                 num_expulsion = count - (self.n_pop - self.num_remove)
@@ -138,25 +142,19 @@ class NSGA2:
         tmp_expulsion = tmp_expulsion + expulsion_add
         self.expulsion_set = tmp_expulsion
     
+    def print_gen(self, gen):
+        with open(self.path_output, 'a') as file:
+            # Ghi các lời gọi print vào file
+            print("Gen: {}".format(gen + 1), file=file)
+            for sol in self.rank[0]:
+                print("     id:{} |fitness:{}".format(sol, self.fitness[sol]), file=file)
+            print("", file=file)
+
+
     def _chooce_on_crowding_distance(self, rank_chooce, num_expulsion):
         expulsion = []
 
         if num_expulsion == 0:
-            return expulsion
-        if num_expulsion <= 3:
-            z = [-1, -1, -1]
-            for sol_id in self.rank[rank_chooce]:
-                if (self.fitness[sol_id][0] <  self.fitness[z[0]][0]) or (z[0] == -1):
-                    z[0] = sol_id
-                if (self.fitness[sol_id][1] <  self.fitness[z[1]][1]) or (z[1] == -1):
-                    z[1] = sol_id
-                if (self.fitness[sol_id][2] <  self.fitness[z[2]][2]) or (z[2] == -1):
-                    z[2] = sol_id
-            
-            for i in range(num_expulsion):
-                element_to_remove = random.choice(z)
-                expulsion.append(element_to_remove)
-                z.remove(element_to_remove)
             return expulsion
         
         z = [-1, -1, -1]
@@ -167,16 +165,10 @@ class NSGA2:
                 z[1] = sol_id
             if (self.fitness[sol_id][2] <  self.fitness[z[2]][2]) or (z[2] == -1):
                 z[2] = sol_id
-        for i in range(3):
-                element_to_remove = random.choice(z)
-                expulsion.append(element_to_remove)
-                z.remove(element_to_remove)
-        num_expulsion -= 3
-
 
         distances = []
         for sol_id1 in self.rank[rank_chooce]:
-            if sol_id1 in expulsion: continue
+            if sol_id1 in z: continue
 
             min_1_id = -1
             min_2_id = -1

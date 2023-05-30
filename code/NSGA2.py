@@ -125,23 +125,17 @@ class NSGA2:
         num_expulsion = -1
 
         for rank in self.rank.keys():
-            # print(self.rank[rank])
             count += len(self.rank[rank])
-            # print("count",count)
 
             if (count > (self.n_pop - self.num_remove)) and (found == 0):
                 rank_choce = rank
-                # print("count=",count)
-                # print("tmp", tmp_expulsion)
                 num_expulsion = count - (self.n_pop - self.num_remove)
                 found = 1
                 continue
 
             if (count > self.num_remove) and (found == 1):
                 tmp_expulsion = tmp_expulsion + self.rank[rank]
-        # print("len111=", len(tmp_expulsion))
-        # print("rankchonj = ", rank_choce)
-        # print(" so luont =", num_expulsion)
+    
         expulsion_add = self._chooce_on_crowding_distance(rank_choce, num_expulsion)
 
         tmp_expulsion = tmp_expulsion + expulsion_add
@@ -213,13 +207,18 @@ class NSGA2:
     def reproductionss(self):
         childs = []
         childs_tmp = []
+
+        dad_used = []
         # lai ghep
         for dad1 in self.rank[0]:
+            dad_used.append(dad1)
             for dad2 in range(self.n_pop):
                 if dad2 in self.expulsion_set:continue
+                if dad2 in dad_used:continue
                 sols_new, ok = self._laighep(dad1, dad2)
                 if ok:
                     childs_tmp = childs_tmp + sols_new
+        
         if len(childs_tmp) > self.num_remove:
             for i in range(self.num_remove - 10):
                 element_to_choice = random.choice(childs_tmp)
@@ -249,12 +248,7 @@ class NSGA2:
                     del new_netw
                     del new_sfc_set
         i = 0
-
         for sol_change in self.expulsion_set:
-            # print(sol_change)
-            # print(i)
-            # print()
-            # print("len=", len(self.expulsion_set))
             self.pop[sol_change] = childs[i]
             i += 1
 
@@ -284,8 +278,7 @@ class NSGA2:
                 dominated_count[i] = -1
         # Lặp lại quá trình xác định các tầng Pareto front tiếp theo
         rank = 0
-        # print(len(dominated_count))
-        # print(dominated_count)
+        
         while len(front) > 0:
             self.rank[rank] = front
             next_front = []

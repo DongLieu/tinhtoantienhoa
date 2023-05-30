@@ -1,6 +1,7 @@
 from MOTLBO import *
 from MOEAD import *
 from NSGA2 import *
+from ISO import *
 
 NAME_FOLDER = "nsf_uniform_1"
 REQUEST = 10
@@ -21,42 +22,32 @@ REQUEST = 10
 # moead.run()
 
 #############################-MOEAD-##################################
-N_POP_NSGA2 = 100
-GEN_NSGA2 = 100
-NUM_REMOVE_NSGA2 = 40
+# N_POP_NSGA2 = 100
+# GEN_NSGA2 = 100
+# NUM_REMOVE_NSGA2 = 40
 
-nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
-nsga2.run()
-# nsga2.initialize_population()
+# nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
+# nsga2.run()
 
-# nsga2.evaluate_population()
-# nsga2.classify_individuals_Pareto_front_layers()
-# # nsga2.print_gen(0)
+##########################-ISO-##################################
+N_POP_ISO = 100
+GEN_ISO = 100
+NUM_REMOVE_ISO = 40
 
-# for i in nsga2.rank.values():
-#     print(i)
+iso = ISO(N_POP_ISO, GEN_ISO, NUM_REMOVE_ISO, NAME_FOLDER, REQUEST)
+iso.run()
 
-# nsga2.rank = dict()
-# print(nsga2.rank)
-# for i in nsga2.rank.values():
-#     print(i)
+# iso.initialize_population()
+# iso.evaluate_population()
+# so = iso.selective()
 
-# nsga2.selective()
+# sol1 = iso.pop[0]
+# sol2 = iso.pop[1]
+# print(sol1.x)
+# print(sol2.x)
 
-# print(len(nsga2.expulsion_set), nsga2.expulsion_set)
-# print("============")
-# i = nsga2.expulsion_set[0]
-# print(nsga2.pop[i].x)
+# sols, ok = iso._laighep(0, 1)
+# if ok:
+#     print(sols[0].x)
+#     print(sols[1].x)
 
-# nsga2.reproductionss()
-
-# print(nsga2.pop[i].x)
-# sol1 =  nsga2.fitness[0]
-# sol2 = nsga2.fitness[1]
-# print(sol1)
-# print(sol2)
-# print(nsga2._distance_fit_sol(0, 1))
-
-
-# for i in range(nsga2.n_pop):
-#     print(i, nsga2.fitness[i])

@@ -1,0 +1,197 @@
+import copy
+from typing import List, Tuple
+from tqdm import tqdm
+import math
+
+from graph_network import *
+from graph_sfc_set import *
+
+from Solution import *
+
+class ISO:
+    def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
+        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_ISO.txt"
+
+        self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
+        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")
+        self.sfc_set.create_global_info(self.network)
+        self.network.create_constraints(self.sfc_set)
+        
+        self.n_pop = N
+        self.Gen = Gen
+        self.num_remove = num_remove
+        self.CR = 0.5
+
+        self.pop = []
+        self.fitness = []
+        self.top_fitness = []   
+        self.expulsion_set = []
+
+     # Ham muc tieu:
+    def _obj_func(self,sol: Solution):
+        fitness = []
+        fitness.append(sol.delay_servers_and_links_use/(sol.max_delay_links + sol.max_delay_servers))
+        fitness.append(sol.cost_servers_use/sol.max_cost_servers)
+        fitness.append(sol.cost_vnfs_use/sol.max_cost_vnfs)
+
+        return fitness
+    
+    def run(self):
+        with open(self.path_output, 'w') as file:
+            file.truncate(0)
+        # khoi tao quan the
+        self.initialize_population()
+        # tinh gia tri ham muc tieu
+        self.evaluate_population()
+        for gen in tqdm(range(self.Gen)):
+            # chon loc
+            self.selective()
+            # prin
+            self.print_gen(gen)
+            # sinh san
+            self.reproductionss()
+            # tinh gia tri ham muc tieu
+            self.evaluate_population()
+    
+    # Hàm tạo quần thể ban đầu
+    def initialize_population(self):
+        while(len(self.pop) != self.n_pop):
+            new_netw = copy.deepcopy(self.network)
+            new_sfc_set = copy.deepcopy(self.sfc_set)
+            
+            init = Solution(new_netw, new_sfc_set)
+            init.init_random()
+            
+            if self._sol_in_pop(init):
+                del new_netw
+                del new_sfc_set
+            else:
+                suc = init.kichhoatnode_dinhtuyen()
+                if suc:
+                    self.pop.append(init)
+                else:
+                    del new_netw
+                    del new_sfc_set
+
+    # Tinh gia tri ham muc tieu cho moi pop[i]
+    def evaluate_population(self):
+        fitniss_tmp = []
+        for solution in range(self.n_pop):
+            fitniss_sol =  sum(self._obj_func(self.pop[solution]))
+            fitniss_tmp.append([solution, fitniss_sol])
+        self.fitness = fitniss_tmp
+
+    # chon loc
+    def selective(self):
+        sorted_fit = sorted(self.fitness, key=lambda x: x[1], reverse=True)
+        self.expulsion_set = [sol_id[0] for sol_id in sorted_fit[:self.num_remove]]
+        self.top_fitness = [sol[0] for sol in sorted_fit[self.n_pop - 10:self.n_pop]]
+        
+    # sinh san
+    def reproductionss(self):
+        childs = []
+
+        # lai ghep
+        childs_tmp = []
+        dad_used = []
+        for dad1 in self.top_fitness:
+            dad_used.append(dad1)
+            for dad2 in range(self.n_pop):
+                if dad2 in self.expulsion_set:continue
+                if dad2 in dad_used:continue
+                if dad2 in self.top_fitness:
+                    sols, suc = self._laighep(dad1, dad2)
+                    if suc:
+                        childs_tmp = childs_tmp + sols
+                else:
+                    random_laighep = random.random()
+                    if random_laighep > self.CR:
+                        continue
+
+                    sols, suc = self._laighep(dad1, dad2)
+                    if suc:
+                        childs_tmp = childs_tmp + sols
+        if len(childs_tmp) > self.num_remove:
+            for i in range(self.num_remove - 10):
+                element_to_choice = random.choice(childs_tmp)
+                childs.append(element_to_choice)
+        else: childs = childs_tmp
+        # dot bien
+        sol_add = self.num_remove - len(childs)
+        while(sol_add > 0):
+            new_netw = copy.deepcopy(self.network)
+            new_sfc_set = copy.deepcopy(self.sfc_set)
+            
+            init = Solution(new_netw, new_sfc_set)
+            init.init_random()
+            
+            if self._sol_in_pop(init):
+                del new_netw
+                del new_sfc_set
+            else:
+                suc = init.kichhoatnode_dinhtuyen()
+                if suc:
+                    childs.append(init)
+                    sol_add -=1
+                else:
+                    del new_netw
+                    del new_sfc_set
+        i = 0
+        for sol_change in self.expulsion_set:
+            self.pop[sol_change] = childs[i]
+            i += 1
+
+    def print_gen(self, gen):
+        with open(self.path_output, 'a') as file:
+            # Ghi các lời gọi print vào file
+            print("Gen: {}".format(gen + 1), file=file)
+            for sol in self.top_fitness:
+                print("     id:{} |fitness:{}".format(sol, self.fitness[sol]), file=file)
+            print("", file=file)
+
+    def _sol_in_pop(self, new_sol: Solution)->bool:
+        for sol in self.pop:
+            if new_sol.x == sol.x:
+                return True
+        return False
+    
+    def _laighep(self, dad1, dad2)->Tuple[List[Solution], bool]:
+        x_dad1 = self.pop[dad1].x
+        x_dad2 = self.pop[dad2].x
+        num_nodes = len(self.pop[dad1].x_vnf)
+        diem_cat = random.randint(1, num_nodes - 1)
+
+        x1 = x_dad1[:diem_cat] + x_dad2[diem_cat:num_nodes]
+        x2 = x_dad2[:diem_cat] + x_dad1[diem_cat:num_nodes]
+
+        num_vnf_dad1 = sum(x_dad1[:diem_cat])
+        num_vnf_dad2 = sum(x_dad2[:diem_cat])
+
+        x1 = x1 + x_dad1[num_nodes:num_nodes + num_vnf_dad1]
+        x1 = x1 + x_dad2[num_nodes+num_vnf_dad2:len(x_dad2)]
+
+        x2 = x2 + x_dad2[num_nodes:num_nodes+num_vnf_dad2]
+        x2 = x2  +x_dad1[num_nodes+num_vnf_dad1:len(x_dad1)]
+        
+        new_netw1 = copy.deepcopy(self.network)
+        new_sfc_set1 = copy.deepcopy(self.sfc_set)
+        new_netw2 = copy.deepcopy(self.network)
+        new_sfc_set2 = copy.deepcopy(self.sfc_set)
+        
+        new_sol1 = Solution(new_netw1, new_sfc_set1)
+        new_sol2 = Solution(new_netw2, new_sfc_set2)
+
+        new_sol1.x = x1
+        new_sol2.x = x2
+
+        new_sol1.tinh_x_vnf()
+        new_sol2.tinh_x_vnf()
+
+        suc1 = new_sol1.kichhoatnode_dinhtuyen()
+        suc2 = new_sol2.kichhoatnode_dinhtuyen()
+
+        sols = []
+        if suc1:sols.append(new_sol1)
+        if suc2: sols.append(new_sol2)
+
+        return sols, (suc1 or suc2)

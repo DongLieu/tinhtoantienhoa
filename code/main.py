@@ -31,23 +31,11 @@ REQUEST = 10
 
 ##########################-ISO-##################################
 N_POP_ISO = 100
-GEN_ISO = 100
+GEN_ISO = 1000
 NUM_REMOVE_ISO = 40
 
 iso = ISO(N_POP_ISO, GEN_ISO, NUM_REMOVE_ISO, NAME_FOLDER, REQUEST)
 iso.run()
 
-# iso.initialize_population()
-# iso.evaluate_population()
-# so = iso.selective()
 
-# sol1 = iso.pop[0]
-# sol2 = iso.pop[1]
-# print(sol1.x)
-# print(sol2.x)
-
-# sols, ok = iso._laighep(0, 1)
-# if ok:
-#     print(sols[0].x)
-#     print(sols[1].x)
 

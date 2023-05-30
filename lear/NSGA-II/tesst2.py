@@ -1,19 +1,32 @@
 import random
 import math
 
-z = [-1, -11, -12]
-print(z)
-num_expulsion = 3
+# z = [-1, -11, -12]
+# print(z)
+# num_expulsion = 3
 
 
-expulsion =[]
+# expulsion =[]
 
-for i in range(num_expulsion):
-    element_to_remove = random.choice(z)
-    expulsion.append(element_to_remove)
-    z.remove(element_to_remove)
+# for i in range(num_expulsion):
+#     element_to_remove = random.choice(z)
+#     expulsion.append(element_to_remove)
+#     z.remove(element_to_remove)
 
-print(z)
-print(expulsion)
+# # print(z)
+# print(expulsion)
+z=      [63, 22, 7, 6, 68, 5, 3, 10, 2, 74, 30, 45, 28, 75, 15, 71]
 
-print(math.sqrt(25))
+# print(math.sqrt(25))
+# z = [86, 1, 5, 91, 20, 21, 54, 99, 10, 45, 72, 2, 15, 26, 81, 32, 87, 25, 50, 69, 83, 37, 97, 16, 51, 88, 23, 38, 65, 8, 9, 44, 98, 74, 18, 55, 64]
+# z = [9, 95, 99, 1, 20, 68, 39, 13, 28, 80, 36, 65, 15, 16, 93, 5, 11, 29, 63, 4, 67, 17, 30, 37, 75, 81, 91, 97, 50, 88, 8, 24, 42, 45, 70, 31, 72, 66, 87]
+# z = [24, 35, 39, 51, 87, 84, 36, 61, 40, 68, 72, 1, 17, 47, 52, 62, 8, 70, 86, 19, 25, 5, 55, 94, 54, 69, 32, 27, 76, 9, 48, 14, 22, 3, 50, 89, 26]
+# s = [22, 0, 84, 91, 86, 5, 86, 1, 5, 91, 20, 21, 54, 99, 10, 45, 72, 2, 15, 26, 81, 32, 87, 25, 50, 69, 83, 37, 97, 16, 51, 88, 23, 38, 65, 8, 9, 44, 98, 74, 18, 55, 64]
+print(len(z))
+# print(len(s))
+
+# suc1 = False
+# suc2 = False
+
+# suc = suc1 or suc2
+# print(suc)

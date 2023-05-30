@@ -1,5 +1,5 @@
 import copy
-from typing import Tuple
+from typing import List, Tuple
 from tqdm import tqdm
 import math
 
@@ -42,7 +42,8 @@ class NSGA2:
         self.initialize_population()
         # tinh gia tri ham muc tieu
         self.evaluate_population()
-        for gen in range(self.Gen):
+        for gen in tqdm(range(self.Gen)):
+            self.rank = dict()
             # Sắp xếp Các tầng Pareto front 
             self.classify_individuals_Pareto_front_layers()
             # print Keets qua
@@ -124,19 +125,23 @@ class NSGA2:
         num_expulsion = -1
 
         for rank in self.rank.keys():
+            # print(self.rank[rank])
             count += len(self.rank[rank])
+            # print("count",count)
 
             if (count > (self.n_pop - self.num_remove)) and (found == 0):
                 rank_choce = rank
+                # print("count=",count)
+                # print("tmp", tmp_expulsion)
                 num_expulsion = count - (self.n_pop - self.num_remove)
                 found = 1
                 continue
 
             if (count > self.num_remove) and (found == 1):
                 tmp_expulsion = tmp_expulsion + self.rank[rank]
-        print("rankchoce = ", rank_choce)
-        print("num_exxx = ", num_expulsion)
-
+        # print("len111=", len(tmp_expulsion))
+        # print("rankchonj = ", rank_choce)
+        # print(" so luont =", num_expulsion)
         expulsion_add = self._chooce_on_crowding_distance(rank_choce, num_expulsion)
 
         tmp_expulsion = tmp_expulsion + expulsion_add
@@ -147,7 +152,7 @@ class NSGA2:
             # Ghi các lời gọi print vào file
             print("Gen: {}".format(gen + 1), file=file)
             for sol in self.rank[0]:
-                print("     id:{} |fitness:{}".format(sol, self.fitness[sol]), file=file)
+                print("     id:{} |Total fit:{} |fitness:{}".format(sol, sum(self.fitness[sol]), self.fitness[sol]), file=file)
             print("", file=file)
 
 
@@ -156,7 +161,7 @@ class NSGA2:
 
         if num_expulsion == 0:
             return expulsion
-        
+        # bien xa nhat
         z = [-1, -1, -1]
         for sol_id in self.rank[rank_chooce]:
             if (self.fitness[sol_id][0] <  self.fitness[z[0]][0]) or (z[0] == -1):
@@ -165,6 +170,18 @@ class NSGA2:
                 z[1] = sol_id
             if (self.fitness[sol_id][2] <  self.fitness[z[2]][2]) or (z[2] == -1):
                 z[2] = sol_id
+        giulai = copy.deepcopy(z)
+
+        check = num_expulsion - len(self.rank[rank_chooce]) + 3
+        if check > 0:
+            for i in range(check):
+                element_to_remove = random.choice(z)
+                expulsion.append(element_to_remove)
+                z.remove(element_to_remove)
+            for sol_id1 in self.rank[rank_chooce]:
+                if sol_id1 in giulai: continue
+                expulsion.append(sol_id1)
+            return expulsion
 
         distances = []
         for sol_id1 in self.rank[rank_chooce]:
@@ -193,20 +210,53 @@ class NSGA2:
 
         return expulsion
 
-        
-
-        
-
-                
-
-
-
-                
-
-        
-    
     def reproductionss(self):
-        return
+        childs = []
+        childs_tmp = []
+        # lai ghep
+        for dad1 in self.rank[0]:
+            for dad2 in range(self.n_pop):
+                if dad2 in self.expulsion_set:continue
+                sols_new, ok = self._laighep(dad1, dad2)
+                if ok:
+                    childs_tmp = childs_tmp + sols_new
+        if len(childs_tmp) > self.num_remove:
+            for i in range(self.num_remove - 10):
+                element_to_choice = random.choice(childs_tmp)
+                childs.append(element_to_choice)
+        else: childs = childs_tmp
+
+        del childs_tmp
+
+        # dotbien
+        sol_can_bo_sung = self.num_remove - len(childs)
+        while(sol_can_bo_sung > 0):
+            new_netw = copy.deepcopy(self.network)
+            new_sfc_set = copy.deepcopy(self.sfc_set)
+            
+            init = Solution(new_netw, new_sfc_set)
+            init.init_random()
+            
+            if self._sol_in_pop(init):
+                del new_netw
+                del new_sfc_set
+            else:
+                suc = init.kichhoatnode_dinhtuyen()
+                if suc:
+                    childs.append(init)
+                    sol_can_bo_sung -=1
+                else:
+                    del new_netw
+                    del new_sfc_set
+        i = 0
+
+        for sol_change in self.expulsion_set:
+            # print(sol_change)
+            # print(i)
+            # print()
+            # print("len=", len(self.expulsion_set))
+            self.pop[sol_change] = childs[i]
+            i += 1
 
     def _distance_fit_sol(self, sol1_id, sol2_id):
         a = sum((x-y)**2 for x,y in zip(self.fitness[sol1_id],self.fitness[sol2_id]))
@@ -234,6 +284,8 @@ class NSGA2:
                 dominated_count[i] = -1
         # Lặp lại quá trình xác định các tầng Pareto front tiếp theo
         rank = 0
+        # print(len(dominated_count))
+        # print(dominated_count)
         while len(front) > 0:
             self.rank[rank] = front
             next_front = []
@@ -246,9 +298,46 @@ class NSGA2:
                             dominated_count[j] = -1
             front = next_front
             rank += 1
+    def _laighep(self, dad1, dad2)->Tuple[List[Solution], bool]:
+        x_dad1 = self.pop[dad1].x
+        x_dad2 = self.pop[dad2].x
+        num_nodes = len(self.pop[dad1].x_vnf)
+        diem_cat = random.randint(1, num_nodes - 1)
+
+        x1 = x_dad1[:diem_cat] + x_dad2[diem_cat:num_nodes]
+        x2 = x_dad2[:diem_cat] + x_dad1[diem_cat:num_nodes]
+
+        num_vnf_dad1 = sum(x_dad1[:diem_cat])
+        num_vnf_dad2 = sum(x_dad2[:diem_cat])
+
+        x1 = x1 + x_dad1[num_nodes:num_nodes + num_vnf_dad1]
+        x1 = x1 + x_dad2[num_nodes+num_vnf_dad2:len(x_dad2)]
+
+        x2 = x2 + x_dad2[num_nodes:num_nodes+num_vnf_dad2]
+        x2 = x2  +x_dad1[num_nodes+num_vnf_dad1:len(x_dad1)]
         
-            
-                    
+        new_netw1 = copy.deepcopy(self.network)
+        new_sfc_set1 = copy.deepcopy(self.sfc_set)
+        new_netw2 = copy.deepcopy(self.network)
+        new_sfc_set2 = copy.deepcopy(self.sfc_set)
+        
+        new_sol1 = Solution(new_netw1, new_sfc_set1)
+        new_sol2 = Solution(new_netw2, new_sfc_set2)
+
+        new_sol1.x = x1
+        new_sol2.x = x2
+
+        new_sol1.tinh_x_vnf()
+        new_sol2.tinh_x_vnf()
+
+        suc1 = new_sol1.kichhoatnode_dinhtuyen()
+        suc2 = new_sol2.kichhoatnode_dinhtuyen()
+
+        sols = []
+        if suc1:sols.append(new_sol1)
+        if suc2: sols.append(new_sol2)
+
+        return sols, (suc1 or suc2)
 
     def _dominates(self, sol1, sol2) ->bool:
         #True  neu sol1 dominates sol2

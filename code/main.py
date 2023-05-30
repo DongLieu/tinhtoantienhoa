@@ -26,18 +26,31 @@ GEN_NSGA2 = 100
 NUM_REMOVE_NSGA2 = 40
 
 nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
-nsga2.initialize_population()
+nsga2.run()
+# nsga2.initialize_population()
 
-nsga2.evaluate_population()
-nsga2.classify_individuals_Pareto_front_layers()
-nsga2.print_gen(0)
+# nsga2.evaluate_population()
+# nsga2.classify_individuals_Pareto_front_layers()
+# # nsga2.print_gen(0)
 
-for i in nsga2.rank.values():
-    print(i)
+# for i in nsga2.rank.values():
+#     print(i)
 
-nsga2.selective()
+# nsga2.rank = dict()
+# print(nsga2.rank)
+# for i in nsga2.rank.values():
+#     print(i)
 
-print(len(nsga2.expulsion_set), nsga2.expulsion_set)
+# nsga2.selective()
+
+# print(len(nsga2.expulsion_set), nsga2.expulsion_set)
+# print("============")
+# i = nsga2.expulsion_set[0]
+# print(nsga2.pop[i].x)
+
+# nsga2.reproductionss()
+
+# print(nsga2.pop[i].x)
 # sol1 =  nsga2.fitness[0]
 # sol2 = nsga2.fitness[1]
 # print(sol1)

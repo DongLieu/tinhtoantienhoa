@@ -15,7 +15,7 @@ class NSGA2:
         self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
         self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")
         self.sfc_set.create_global_info(self.network)
-        self.network.create_constraints(self.sfc_set)
+        self.network.create_constraints_and_min_paths(self.sfc_set)
         
         self.n_pop = N
         self.Gen = Gen

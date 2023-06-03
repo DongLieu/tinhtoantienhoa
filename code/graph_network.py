@@ -87,8 +87,6 @@ class Network():
         self.max_delay_links = sum(i.delay for i in self.L.values())
 
         self.min_delay_local_tsps = dict()
-        self.search_path_min()
-
 
         self.min_delay_local = 999999999999
 
@@ -151,7 +149,7 @@ class Network():
         if num_sfcs != -1:
             self.pheromone = np.stack([self.pheromone]*num_sfcs, axis=0)
 
-    def create_constraints(self, sfc_set):
+    def create_constraints_and_min_paths(self, sfc_set):
         self.memmax = sfc_set.memmax
         self.cpumax = sfc_set.cpumax
         self.capmax = sfc_set.capmax
@@ -163,6 +161,8 @@ class Network():
 
         for link in self.L.values():
             link.resource_capacity, link.resource_available = sfc_set.capmax, sfc_set.capmax
+
+        self.search_path_min()
 
     def __repr__(self) -> str:
         return "Network {}| No.Node: {} | No.Link: {} | No. type VNF: {}".format(self.name, self.num_nodes, self.num_links, self.num_type_vnfs)

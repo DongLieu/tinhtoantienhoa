@@ -14,20 +14,20 @@ REQUEST = 10
 # motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, NUM_REMOVE_MOTLBO, NAME_FOLDER, REQUEST)
 # motlbo.run()
 
-#############################-MOEAD-##############################
-# N_POP_MOEAD = 20
-# GEN_MOEAD = 1000
+############################-MOEAD-##############################
+N_POP_MOEAD = 20
+GEN_MOEAD = 1000
 
-# moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, NAME_FOLDER, REQUEST)
-# moead.run()
+moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, NAME_FOLDER, REQUEST)
+moead.run()
 
-############################-MOEAD-##################################
-N_POP_NSGA2 = 100
-GEN_NSGA2 = 100
-NUM_REMOVE_NSGA2 = 40
+# ############################-MOEAD-##################################
+# N_POP_NSGA2 = 100
+# GEN_NSGA2 = 100
+# NUM_REMOVE_NSGA2 = 40
 
-nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
-nsga2.run()
+# nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
+# nsga2.run()
 
 ##########################-ISO-##################################
 # N_POP_ISO = 100

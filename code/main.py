@@ -5,32 +5,32 @@ from MOEAD import *
 from NSGA2 import *
 from ISO import *
 
-NAME_FOLDER = "nsf_uniform_1"
+NAME_FOLDER = "nsf_uniform_0"
 REQUEST = 10
 TIMELIMIT = 600
 
-#############################-MOTLBO-##############################
+# #############################-MOTLBO-##############################
 N_POP_MOTLBO = 100
 GEN_MOTLBO = 100
 NUM_REMOVE_MOTLBO = 20
 
-# motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, TIMELIMIT, NUM_REMOVE_MOTLBO, NAME_FOLDER, REQUEST)
-# motlbo.run()
+motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, TIMELIMIT, NUM_REMOVE_MOTLBO, NAME_FOLDER, REQUEST)
+motlbo.run()
 
 # ############################-MOEAD-##############################
 N_POP_MOEAD = 20
 GEN_MOEAD = 1000
 
-# moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, NAME_FOLDER, REQUEST)
-# moead.run()
+moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, NAME_FOLDER, REQUEST)
+moead.run()
 
 # # ############################-NSGA2-##################################
 N_POP_NSGA2 = 100
 GEN_NSGA2 = 100
 NUM_REMOVE_NSGA2 = 40
 
-# nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
-# nsga2.run()
+nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
+nsga2.run()
 
 # ##########################-ISO-##################################
 N_POP_ISO = 100

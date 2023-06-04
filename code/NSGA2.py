@@ -242,7 +242,7 @@ class NSGA2:
         del childs_tmp
 
         # dotbien
-        sol_can_bo_sung = self.num_remove - len(childs)
+        sol_can_bo_sung = len(self.expulsion_set) - len(childs)
         while(sol_can_bo_sung > 0):
             new_netw = copy.deepcopy(self.network)
             new_sfc_set = copy.deepcopy(self.sfc_set)
@@ -263,6 +263,7 @@ class NSGA2:
                     del new_sfc_set
         i = 0
         for sol_change in self.expulsion_set:
+            # print(sol_change)
             self.pop[sol_change] = childs[i]
             i += 1
 

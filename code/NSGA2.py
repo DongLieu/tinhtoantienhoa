@@ -2,6 +2,7 @@ import copy
 from typing import List, Tuple
 from tqdm import tqdm
 import math
+import time
 
 from graph_network import *
 from graph_sfc_set import *
@@ -9,7 +10,7 @@ from graph_sfc_set import *
 from Solution import *
 
 class NSGA2:
-    def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
+    def __init__(self, N, Gen, timelimit, num_remove, name_folder, request:int) -> None:
         self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_NSGA2.txt"
 
         self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
@@ -20,6 +21,7 @@ class NSGA2:
         self.n_pop = N
         self.Gen = Gen
         self.num_remove = num_remove
+        self.time = timelimit
 
         self.pop = []
         self.fitness = []
@@ -42,7 +44,12 @@ class NSGA2:
         self.initialize_population()
         # tinh gia tri ham muc tieu
         self.evaluate_population()
-        for gen in tqdm(range(self.Gen)):
+        # thoi gian bat dau
+        start_time = time.time() 
+        gen = 0
+        while True:
+            gen += 1
+        # for gen in tqdm(range(self.Gen)):
             self.rank = dict()
             # Sắp xếp Các tầng Pareto front 
             self.classify_individuals_Pareto_front_layers()
@@ -54,6 +61,13 @@ class NSGA2:
             self.reproductionss()
             # tinh gia tri ham muc tieu
             self.evaluate_population()
+
+            current_time = time.time()  # Lấy thời gian hiện tại
+            elapsed_time = current_time - start_time  # Tính thời gian đã trôi qua
+            if elapsed_time >= self.time:  # Kiểm tra nếu đã đạt đến thời gian kết thúc (ví dụ: 600 giây - 10 phút)
+                break  # Thoát khỏi vòng lặp
+            else:
+                print("Gen: ", gen)
 
 
     # Hàm tạo quần thể ban đầu

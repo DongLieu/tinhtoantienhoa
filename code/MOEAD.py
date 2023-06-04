@@ -1,6 +1,7 @@
 import copy
 from typing import List, Tuple
 from tqdm import tqdm
+import time
 
 from graph_network import *
 from graph_sfc_set import *
@@ -8,7 +9,7 @@ from graph_sfc_set import *
 from Solution import *
 
 class MOEAD:
-    def __init__(self, N, Gen, name_folder, request:int) -> None:
+    def __init__(self, N, Gen, timelimit, name_folder, request:int) -> None:
         self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_MOEAD.txt"
 
         self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
@@ -20,6 +21,7 @@ class MOEAD:
         self.Gen = Gen
         self.num_nei = 3
         self.CR = 0.8
+        self.time = timelimit
 
         self.weight = []
         self.B = []
@@ -48,7 +50,12 @@ class MOEAD:
         self.initialize_population()
         #  tinh gia tri ham muc tieu va z
         self.evaluate_population()
-        for gen in tqdm(range(self.Gen)):
+        # thoi gian bat dau
+        start_time = time.time() 
+        gen = 0
+        while True:
+            gen += 1
+        # for gen in tqdm(range(self.Gen)):
             # chon ngau nhien ca the trong quan the de sinh san
             rand_sol = random.randint(0, self.n_pop - 1)
             # sinh san tu ca the duoc chon(laighep-dotbien)
@@ -57,16 +64,22 @@ class MOEAD:
                 
                 with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
-                    print("Gen:new {}".format(gen + 1), file=file)
+                    print("Gen:new {}".format(gen), file=file)
                     print("     continue len = {}".format(len(new_sols)), file=file)
                     print("", file=file)
-                continue
 
-            for new_sol in new_sols:
-                sol_neis = self.B[rand_sol]
-                for sol_nei in sol_neis:
-                    self.new_sol_is_good_to_update(sol_nei, new_sol)
-            self.print_the_result_in_generation(gen)
+                current_time = time.time()  # Lấy thời gian hiện tại
+                elapsed_time = current_time - start_time  # Tính thời gian đã trôi qua
+                if elapsed_time >= self.time:  # Kiểm tra nếu đã đạt đến thời gian kết thúc (ví dụ: 600 giây - 10 phút)
+                    break  # Thoát khỏi vòng lặp
+                else:
+                    continue
+            else:
+                for new_sol in new_sols:
+                    sol_neis = self.B[rand_sol]
+                    for sol_nei in sol_neis:
+                        self.new_sol_is_good_to_update(sol_nei, new_sol)
+                self.print_the_result_in_generation(gen)
             
             
     def initialization_weight(self):

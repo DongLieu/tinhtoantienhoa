@@ -1,13 +1,14 @@
 import copy
 from typing import Tuple
 from tqdm import tqdm
+import time
 
 from graph_network import *
 from graph_sfc_set import *
 
 from Solution import *
 class MOTLBO:
-    def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
+    def __init__(self, N, Gen, time, num_remove, name_folder, request:int) -> None:
         self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_MOTLBO.txt"
 
         self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
@@ -18,6 +19,7 @@ class MOTLBO:
         self.n_pop = N
         self.Gen = Gen
         self.num_remove = num_remove
+        self.time = time
 
         self.pop = []
         self.fitness = []
@@ -43,7 +45,12 @@ class MOTLBO:
         self.trung_sol()
         # sap xep, tim ra top_finess va ca the yeu
         self.good_finess_and_expulsion()
-        for gen in tqdm(range(self.Gen)):
+        # thoi gian bat dau
+        start_time = time.time() 
+        gen = 0
+        while True:
+            gen += 1
+        # for gen in tqdm(range(self.Gen)):
             # day
             self.teaching_phase()
             # hoc
@@ -65,12 +72,17 @@ class MOTLBO:
             
             with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
-                print("Gen: {}".format(gen + 1), file=file)
+                print("Gen: {}".format(gen), file=file)
                 print("Good: {}||ID: {} || x: {}".format(sum(self.fitness[self.quansat]),self.quansat,  self.pop[self.quansat].x_vnf), file = file)
                 
                 for good_fitness in self.dominant_set:
                     print("{}: {}".format(sum(self.fitness[good_fitness]), self.fitness[good_fitness]), file=file)
                 print("", file=file)  # In một dòng trống
+
+            current_time = time.time()  # Lấy thời gian hiện tại
+            elapsed_time = current_time - start_time  # Tính thời gian đã trôi qua
+            if elapsed_time >= self.time:  # Kiểm tra nếu đã đạt đến thời gian kết thúc (ví dụ: 600 giây - 10 phút)
+                break  # Thoát khỏi vòng lặp
                 
     # Ham muc tieu:
     def _obj_func(self,sol: Solution):

@@ -5,7 +5,7 @@ from MOEAD import *
 from NSGA2 import *
 from ISO import *
 
-NAME_FOLDER = "nsf_uniform_3"
+NAME_FOLDER = "nsf_urban_3"
 REQUEST = 10
 TIMELIMIT = 600
 

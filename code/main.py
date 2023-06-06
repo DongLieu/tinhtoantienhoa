@@ -5,7 +5,7 @@ from MOEAD import *
 from NSGA2 import *
 from ISO import *
 
-NAME_FOLDER = "nsf_rural_2"
+NAME_FOLDER = "nsf_rural_4"
 REQUEST = 10
 TIMELIMIT = 600
 

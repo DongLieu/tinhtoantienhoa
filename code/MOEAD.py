@@ -185,7 +185,7 @@ class MOEAD:
     def print_the_result_in_generation(self, gen):
         with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
-                print("Gen: {}".format(gen + 1), file=file)
+                print("Gen: {}".format(gen), file=file)
                 for sol_id in range(self.n_pop):
                     # weights = self.weight[sol_id]
                     # rounded_weights = [round(w, 5) for w in weights]

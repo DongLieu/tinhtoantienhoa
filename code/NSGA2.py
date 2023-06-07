@@ -117,6 +117,9 @@ class NSGA2:
                                 if suc:
                                     self.pop[i] = init
                                     self.fitness[i] = self._obj_func(init)
+                                    print("i=", i)
+                                    print("j=", j)
+                                    print()
                                     co_trung_fitness()
                                     return
                                 else:

@@ -5,13 +5,13 @@ from MOEAD import *
 from NSGA2 import *
 from ISO import *
 
-NAME_FOLDER = "nsf_rural_4"
+NAME_FOLDER = "nsf_center_4"
 REQUEST = 10
 TIMELIMIT = 600
 
-# #############################-MOTLBO-##############################
-N_POP_MOTLBO = 100
-GEN_MOTLBO = 100
+#############################-MOTLBO-##############################
+N_POP_MOTLBO = 50
+GEN_MOTLBO = 1000
 NUM_REMOVE_MOTLBO = 20
 
 motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, TIMELIMIT, NUM_REMOVE_MOTLBO, NAME_FOLDER, REQUEST)
@@ -25,9 +25,9 @@ moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, NAME_FOLDER, REQUEST)
 moead.run()
 
 # # ############################-NSGA2-##################################
-N_POP_NSGA2 = 100
-GEN_NSGA2 = 100
-NUM_REMOVE_NSGA2 = 40
+N_POP_NSGA2 = 50
+GEN_NSGA2 = 50
+NUM_REMOVE_NSGA2 = 10
 
 nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, NAME_FOLDER, REQUEST)
 nsga2.run()

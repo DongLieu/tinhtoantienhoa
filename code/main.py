@@ -5,8 +5,8 @@ from MOEAD import *
 from NSGA2 import *
 from ISO import *
 
-NAME_FOLDER = "nsf_center_4"
-REQUEST = 10
+NAME_FOLDER = "conus_urban_2"
+REQUEST = 20
 TIMELIMIT = 600
 
 #############################-MOTLBO-##############################

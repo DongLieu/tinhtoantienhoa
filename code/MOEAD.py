@@ -228,11 +228,12 @@ class MOEAD:
         return None, False
     
     def _laighep(self, sol_id)-> Tuple[List[Solution], bool]:
-        neis = self.B[sol_id]
+        neis = copy.deepcopy(self.B[sol_id])
         num_dad = len(neis)
         dads = []
         for nei in neis:
-            dads.append(self.pop[nei])
+            sol = copy.deepcopy(self.pop[nei])
+            dads.append(sol)
 
         numnode = len(dads[0].x_vnf)
         # ba diem cat

@@ -262,8 +262,8 @@ class MOTLBO:
     
 
     def _teacher_teaching_student(self, teacher: Solution, student: Solution) -> Tuple[Solution, bool]:
-        x_teacher = teacher.x
-        x_student = student.x
+        x_teacher = copy.deepcopy(teacher.x)
+        x_student = copy.deepcopy(student.x)
         num_nodes = len(teacher.x_vnf)
         diem_cat = random.randint(1, num_nodes - 1)
 

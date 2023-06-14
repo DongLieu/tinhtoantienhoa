@@ -117,9 +117,6 @@ class NSGA2:
                                 if suc:
                                     self.pop[i] = init
                                     self.fitness[i] = self._obj_func(init)
-                                    print("i=", i)
-                                    print("j=", j)
-                                    print()
                                     co_trung_fitness()
                                     return
                                 else:
@@ -310,8 +307,8 @@ class NSGA2:
             front = next_front
             rank += 1
     def _laighep(self, dad1, dad2)->Tuple[List[Solution], bool]:
-        x_dad1 = self.pop[dad1].x
-        x_dad2 = self.pop[dad2].x
+        x_dad1 = copy.deepcopy(self.pop[dad1].x)
+        x_dad2 = copy.deepcopy(self.pop[dad2].x)
         num_nodes = len(self.pop[dad1].x_vnf)
         diem_cat = random.randint(1, num_nodes - 1)
 

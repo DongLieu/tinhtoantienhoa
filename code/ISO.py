@@ -11,10 +11,10 @@ from Solution import *
 
 class ISO:
     def __init__(self, N, Gen, timelimit, num_remove, name_folder, request:int) -> None:
-        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_ISO.txt"
+        self.path_output = "./code/output/" + name_folder + "/request" + str(request) + "_ISO.txt"
 
-        self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")
+        self.network = Network("./code/dataset/" + name_folder + "/input.txt")
+        self.sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")
         self.sfc_set.create_global_info(self.network)
         self.network.create_constraints_and_min_paths(self.sfc_set)
         

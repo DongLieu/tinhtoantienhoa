@@ -9,10 +9,10 @@ from Solution import *
 
 class SPEA2:
     def __init__(self, N, Gen, num_remove, name_folder, request:int) -> None:
-        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_SPEA2.txt"
+        self.path_output = "./code/output/" + name_folder + "/request" + str(request) + "_SPEA2.txt"
 
-        self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")
+        self.network = Network("./code/dataset/" + name_folder + "/input.txt")
+        self.sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")
         self.sfc_set.create_global_info(self.network)
         self.network.create_constraints(self.sfc_set)
         

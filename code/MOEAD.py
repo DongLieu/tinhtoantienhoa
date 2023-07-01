@@ -10,10 +10,10 @@ from Solution import *
 
 class MOEAD:
     def __init__(self, N, Gen, timelimit, name_folder, request:int) -> None:
-        self.path_output = "/Users/duongdong/tinhtoantienhoa/code/output/" + name_folder + "/request" + str(request) + "_MOEAD.txt"
+        self.path_output = "./code/output/" + name_folder + "/request" + str(request) + "_MOEAD.txt"
 
-        self.network = Network("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("/Users/duongdong/tinhtoantienhoa/code/dataset/" + name_folder + "/request" + str(request) + ".txt")
+        self.network = Network("./code/dataset/" + name_folder + "/input.txt")
+        self.sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")
         self.sfc_set.create_global_info(self.network)
         self.network.create_constraints_and_min_paths(self.sfc_set)
         
@@ -48,7 +48,7 @@ class MOEAD:
         self.neighboring_Solutions()
         # khoi tao
         self.initialize_population()
-        #  tinh gia tri ham muc tieu va z
+        #  tinh gia tri ham muc tieu
         self.evaluate_population()
         # thoi gian bat dau
         start_time = time.time() 
@@ -189,7 +189,7 @@ class MOEAD:
                 for sol_id in range(self.n_pop):
                     # weights = self.weight[sol_id]
                     # rounded_weights = [round(w, 5) for w in weights]
-                    print("     id: {}| fitness:{} | w: {}".format(sol_id,self.fitness[sol_id], self.weight[sol_id]), file=file)
+                    print("     id: {}| fitness:{} | w: {} |fit^123:{}".format(sol_id,self.fitness[sol_id], self.weight[sol_id], self._obj_func(self.pop[sol_id])), file=file)
                 print("", file=file)
 
         return

@@ -45,7 +45,7 @@ for mien in miens:
 
                 GEN_MOEAD = 1000
 
-                moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, name_folder, request)
+                moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, sol_mau)
                 moead.run()
 
                 # # ############################-NSGA2-##################################
@@ -53,7 +53,7 @@ for mien in miens:
                 GEN_NSGA2 = 50
                 NUM_REMOVE_NSGA2 = 10
 
-                nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, name_folder, request)
+                nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, sol_mau)
                 nsga2.run()
 
                 # ##########################-ISO-##################################
@@ -61,5 +61,5 @@ for mien in miens:
                 GEN_ISO = 1000
                 NUM_REMOVE_ISO = 40
 
-                iso = ISO(N_POP_ISO, GEN_ISO, TIMELIMIT, NUM_REMOVE_ISO, name_folder, request)
+                iso = ISO(N_POP_ISO, GEN_ISO, TIMELIMIT, NUM_REMOVE_ISO, sol_mau)
                 iso.run()

@@ -33,11 +33,9 @@ class MOTLBO:
             file.truncate(0)
 
         # khoi tao
-        print("start init")
         self.initialize_population()
         # tinh gia tri ham muc tieu
 
-        print("start eval")
         self.evaluate_population()
         # sol was in pop
         self.trung_sol()
@@ -46,7 +44,6 @@ class MOTLBO:
         # thoi gian bat dau
         start_time = time.time() 
         gen = 0
-        print("start geen")
         while True:
             gen += 1
         # for gen in tqdm(range(self.Gen)):
@@ -65,7 +62,7 @@ class MOTLBO:
             # sap xep, tim ra top_finess va ca the yeu
             self.good_finess_and_expulsion()
             # write file output
-            self.print_gen()
+            self.print_gen(gen)
 
             current_time = time.time()  # Lấy thời gian hiện tại
             elapsed_time = current_time - start_time  # Tính thời gian đã trôi qua

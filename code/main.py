@@ -65,25 +65,3 @@ for mien in miens:
 
                 # iso = ISO(N_POP_ISO, GEN_ISO, TIMELIMIT, NUM_REMOVE_ISO, name_folder, request)
                 # iso.run()
-
-# ##########################-ALL-##################################
-
-# # Tạo các đối tượng Thread cho từng hàm
-# thread1 = threading.Thread(target=motlbo.run)
-# thread2 = threading.Thread(target=moead.run)
-# thread3 = threading.Thread(target=nsga2.run)
-# thread4 = threading.Thread(target=iso.run)
-# # Khởi động các luồng thực thi
-# thread1.start()
-# thread2.start()
-# thread3.start()
-# thread4.start()
-
-# # Đợi cho tất cả các luồng kết 
-
-
-
-# thread1.join()
-# thread2.join()
-# thread3.join()
-# thread4.join()

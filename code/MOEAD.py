@@ -9,13 +9,10 @@ from graph_sfc_set import *
 from Solution import *
 
 class MOEAD:
-    def __init__(self, N, Gen, timelimit, name_folder, request:int) -> None:
-        self.path_output = "./code/output/" + name_folder + "/request" + str(request) + "_MOEAD.txt"
-
-        self.network = Network("./code/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")
-        self.sfc_set.create_global_info(self.network)
-        self.network.create_constraints_and_min_paths(self.sfc_set)
+    def __init__(self, N, Gen, timelimit, sol_mau:Solution) -> None:
+        self.path_output = sol_mau.name_folder_output + "_MOEAD.txt"
+        self.network = sol_mau.net
+        self.sfc_set = sol_mau.sfcs 
         
         self.n_pop = N
         self.Gen = Gen
@@ -55,7 +52,7 @@ class MOEAD:
         # tinh cac nei 
         self.neighboring_Solutions()
         # khoi tao
-        self.initialize_population()
+        self.initialize_population()\
         #  tinh gia tri ham muc tieu
         self.evaluate_population()
         # thoi gian bat dau

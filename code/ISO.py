@@ -10,14 +10,11 @@ from graph_sfc_set import *
 from Solution import *
 
 class ISO:
-    def __init__(self, N, Gen, timelimit, num_remove, name_folder, request:int) -> None:
-        self.path_output = "./code/output/" + name_folder + "/request" + str(request) + "_ISO.txt"
+    def __init__(self, N, Gen, timelimit, num_remove, sol_mau:Solution) -> None:
+        self.path_output = sol_mau.name_folder_output + "_ISO.txt"
+        self.network = sol_mau.net
+        self.sfc_set = sol_mau.sfcs 
 
-        self.network = Network("./code/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")
-        self.sfc_set.create_global_info(self.network)
-        self.network.create_constraints_and_min_paths(self.sfc_set)
-        
         self.n_pop = N
         self.Gen = Gen
         self.num_remove = num_remove

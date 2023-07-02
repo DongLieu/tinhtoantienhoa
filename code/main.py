@@ -9,14 +9,14 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["cogent"]
-vungs = ["center"]#"rural", "uniform", "urban"]#"center",
+miens = ["nsf"]#, "congent", "conus"]
+vungs = ["center"]#, "rural", "uniform", "urban"]
 
-requests = [10, 20, 30]
+requests = [10]#, 20, 30]
 
 TIMELIMIT = 600
 
-i_s = [2, 1, 0, 3, 4]
+i_s = [2]
 
 for mien in miens:
     for vung in vungs:
@@ -39,7 +39,7 @@ for mien in miens:
                 NUM_REMOVE_MOTLBO = 20
 
                 motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, TIMELIMIT, NUM_REMOVE_MOTLBO, sol_mau)
-
+                motlbo.initialize_population()
                 # motlbo.run()
 
                 # # ############################-MOEAD-##############################

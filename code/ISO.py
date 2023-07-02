@@ -158,7 +158,7 @@ class ISO:
             # Ghi các lời gọi print vào file
             print("Gen: {}".format(gen + 1), file=file)
             for sol in self.top_fitness:
-                print("     id:{} |fitness:{}".format(sol, self.fitness[sol]), file=file)
+                print("     {}".format(self._obj_func(self.pop[sol])), file=file)
             print("", file=file)
 
     def _sol_in_pop(self, new_sol: Solution)->bool:

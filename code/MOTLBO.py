@@ -12,8 +12,7 @@ class MOTLBO:
 
         self.path_output = sol_mau.name_folder_output + "_MOTLBO.txt"
         self.network = sol_mau.net
-        self.sfc_set = sol_mau.sfcs
-
+        self.sfc_set = sol_mau.sfcs 
         self.n_pop = N
         self.Gen = Gen
         self.num_remove = num_remove
@@ -28,8 +27,6 @@ class MOTLBO:
         self.need_improve = []
         self.dominant_set = []
         self.expulsion_set = []
-
-        self.quansat = 0
 
     def run(self):
         with open(self.path_output, 'w') as file:
@@ -67,19 +64,8 @@ class MOTLBO:
             self.trung_sol()
             # sap xep, tim ra top_finess va ca the yeu
             self.good_finess_and_expulsion()
-
-            for good_fitness in self.dominant_set:
-                if sum(self.fitness[good_fitness]) < sum(self.fitness[self.quansat]):
-                    self.quansat = good_fitness
-            
-            with open(self.path_output, 'a') as file:
-                # Ghi các lời gọi print vào file
-                print("Gen: {}".format(gen), file=file)
-                print("Good: {}||ID: {} || x: {}".format(sum(self.fitness[self.quansat]),self.quansat,  self.pop[self.quansat].x_vnf), file = file)
-                
-                for good_fitness in self.dominant_set:
-                    print("{}: {}".format(sum(self.fitness[good_fitness]), self.fitness[good_fitness]), file=file)
-                print("", file=file)  # In một dòng trống
+            # write file output
+            self.print_gen()
 
             current_time = time.time()  # Lấy thời gian hiện tại
             elapsed_time = current_time - start_time  # Tính thời gian đã trôi qua
@@ -94,6 +80,16 @@ class MOTLBO:
         fitness.append(sol.cost_vnfs_use/sol.max_cost_vnfs)
 
         return fitness
+    
+    # print_gen
+    def print_gen(self, gen):
+        with open(self.path_output, 'a') as file:
+            # Ghi các lời gọi print vào file
+            print("Gen: {}".format(gen), file=file)
+            for good_fitness in self.dominant_set:
+                print("     {}".format(self.fitness[good_fitness]), file=file)
+            print("", file=file)  # In một dòng trống
+
     # Khoi tao quan the, (kich hoat node, dinhtuyen cho moi ca the)
     def initialize_population(self):
         while(len(self.pop) != self.n_pop):

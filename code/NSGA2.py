@@ -160,9 +160,8 @@ class NSGA2:
             # Ghi các lời gọi print vào file
             print("Gen: {}".format(gen + 1), file=file)
             for sol in self.rank[0]:
-                print("     id:{} |Total fit:{} |fitness:{}".format(sol, sum(self.fitness[sol]), self.fitness[sol]), file=file)
+                print("     {}".format(self.fitness[sol]), file=file)
             print("", file=file)
-
 
     def _chooce_on_crowding_distance(self, rank_chooce, num_expulsion):
         expulsion = []

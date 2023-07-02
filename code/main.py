@@ -4,13 +4,12 @@ from MOEAD import *
 from NSGA2 import *
 from ISO import *
 
-miens = ["cogent"]
-vungs = ["center"]#"rural", "uniform", "urban"]#"center",
+miens = ["cogent", "conus", "nsf"]
+vungs = ["center", "rural", "uniform", "urban"]
 
 requests = [10, 20, 30]
 
 TIMELIMIT = 600
-
 
 for mien in miens:
     for vung in vungs:

@@ -9,7 +9,7 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["nsf"]#, "congent", "conus"]
+miens = ["cogent"]#"nsf"]#, , "conus"]
 vungs = ["center"]#, "rural", "uniform", "urban"]
 
 requests = [10]#, 20, 30]
@@ -24,7 +24,6 @@ for mien in miens:
         for request in requests:
             for i in i_s:
                 name_folder = mien+"_"+vung+"_"+str(i)
-                # print("namefolder:{}|| request:{}|| ".format(name_folder, request))
 
                 network = Network("./code/dataset/" + name_folder + "/input.txt")
                 sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")

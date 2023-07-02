@@ -93,13 +93,11 @@ class MOTLBO:
     # Khoi tao quan the, (kich hoat node, dinhtuyen cho moi ca the)
     def initialize_population(self):
         while(len(self.pop) != self.n_pop):
-            print(len(self.pop))
             new_netw = copy.deepcopy(self.network)
             new_sfc_set = copy.deepcopy(self.sfc_set)
             
             init = Solution(new_netw, new_sfc_set)
             init.init_random()
-            print(init.x_vnf)
             if self._sol_in_pop(init):
                 del new_netw
                 del new_sfc_set

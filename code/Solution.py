@@ -17,6 +17,8 @@ class Solution():
         
         self.vnf_requests = []
         self._search_vnf_requests()
+        self.num_vnfs_max = 0
+        self._total_vnfs_netwwork_max()
 
         #khi dinh tuyen moi tinh toan 
         # dinh tuyen
@@ -36,14 +38,41 @@ class Solution():
         self.max_cost_vnfs = net.max_cost_vnfs
 
     def init_random(self):
-        x = []
-        for i in range(self.net.num_nodes):
-            if i in self.net.server_ids:
-                tmp = random.randint(0, self.net.N[i].num_vnfs_limit)
-                x.append(tmp)
-            else:
-                x.append(0)
+        if self.num_vnfs_max == len(self.vnf_requests):
+            x = []
+            for i in range(self.net.num_nodes):
+                if i in self.net.server_ids:
+                    x.append(1)
+                else:
+                    x.append(0)
 
+            vnfs = []
+            for vnf_type in range(self.num_vnfs_max):
+                vnfs.append(vnf_type)
+
+            for i in range(self.num_vnfs_max):
+                rand = random.choice(vnfs)
+                vnfs.remove(rand)
+                x.append(rand)
+            self.x = x
+            self.tinh_x_vnf()
+            return
+        
+        while(1):
+            x = []
+            sum_x = 0
+            for i in range(self.net.num_nodes):
+                if i in self.net.server_ids:
+                    tmp = random.randint(0, self.net.N[i].num_vnfs_limit)
+                    sum_x += tmp
+                    x.append(tmp)
+                else:
+                    x.append(0)
+            if sum_x < len(self.vnf_requests):
+                continue
+            else:
+                break
+        
         for i in range(len(x)):
             tmp_x_vnf =[]
             for j in range(x[i]):
@@ -159,6 +188,12 @@ class Solution():
                     self.vnf_requests.append(vnf)
                     if len(self.vnf_requests) == self.net.num_type_vnfs:
                         return
+    def _total_vnfs_netwwork_max(self):
+        total = 0
+        for sv in self.net.server_ids:
+            total += self.net.N[sv].num_vnfs_limit
+        
+        self.num_vnfs_max = total
 
     def x_has_vnf_in_vnf_request(self) -> bool:
 

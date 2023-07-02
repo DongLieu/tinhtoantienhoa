@@ -8,13 +8,11 @@ from graph_sfc_set import *
 
 from Solution import *
 class MOTLBO:
-    def __init__(self, N, Gen, time, num_remove, name_folder, request:int) -> None:
-        self.path_output = "./code/output/" + name_folder + "/request" + str(request) + "_MOTLBO.txt"
+    def __init__(self, N, Gen, time, num_remove, sol_mau:Solution) -> None:
 
-        self.network = Network("./code/dataset/" + name_folder + "/input.txt")
-        self.sfc_set = SFC_SET("./code/dataset/" + name_folder + "/request" + str(request) + ".txt")
-        self.sfc_set.create_global_info(self.network)
-        self.network.create_constraints_and_min_paths(self.sfc_set)
+        self.path_output = sol_mau.name_folder_output + "_MOTLBO.txt"
+        self.network = sol_mau.net
+        self.sfc_set = sol_mau.sfcs
 
         self.n_pop = N
         self.Gen = Gen
@@ -38,8 +36,11 @@ class MOTLBO:
             file.truncate(0)
 
         # khoi tao
+        print("start init")
         self.initialize_population()
         # tinh gia tri ham muc tieu
+
+        print("start eval")
         self.evaluate_population()
         # sol was in pop
         self.trung_sol()
@@ -48,6 +49,7 @@ class MOTLBO:
         # thoi gian bat dau
         start_time = time.time() 
         gen = 0
+        print("start geen")
         while True:
             gen += 1
         # for gen in tqdm(range(self.Gen)):
@@ -95,12 +97,13 @@ class MOTLBO:
     # Khoi tao quan the, (kich hoat node, dinhtuyen cho moi ca the)
     def initialize_population(self):
         while(len(self.pop) != self.n_pop):
+            print(len(self.pop))
             new_netw = copy.deepcopy(self.network)
             new_sfc_set = copy.deepcopy(self.sfc_set)
             
             init = Solution(new_netw, new_sfc_set)
             init.init_random()
-            
+            print(init.x_vnf)
             if self._sol_in_pop(init):
                 del new_netw
                 del new_sfc_set

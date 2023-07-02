@@ -6,6 +6,7 @@ from graph_sfc_set import *
 
 class Solution():
     def __init__(self, net: Network, sfcs: SFC_SET) -> None:
+        self.name_folder_output = None
         self.net = net
         self.sfcs = sfcs
 

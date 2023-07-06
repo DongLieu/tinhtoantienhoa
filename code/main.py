@@ -9,8 +9,9 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["cogent"]#"nsf"]#, , "conus"]
-vungs = ["center"]#, "rural", "uniform", "urban"]
+miens = ["conus"]#["cogent", "nsf" ,
+
+vungs = ["urban"]
 
 requests = [10, 20, 30]
 

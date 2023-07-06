@@ -9,10 +9,10 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["nsf"]# , "conus"]"cogent", 
-vungs = ["center","rural", "uniform", "urban"]
+miens = ["conus"]#"nsf"]# , "conus"]"cogent", 
+vungs = ["urban"]#["center","rural", "uniform", "urban"]
 
-requests = [10, 20, 30]
+requests = [20]
 
 TIMELIMIT = 600
 

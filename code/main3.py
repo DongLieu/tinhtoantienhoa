@@ -9,10 +9,10 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["cogent"]#, "nsf" , "conus"]
-vungs = ["center","rural", "uniform", "urban"]
+miens = ["conus"]#"nsf"]# , "conus"]"cogent", 
+vungs = ["urban"]#["center","rural", "uniform", "urban"]
 
-requests = [10, 20, 30]
+requests = [30]
 
 TIMELIMIT = 600
 
@@ -21,10 +21,7 @@ i_s = [2, 1, 0, 3, 4]
 for mien in miens:
     for vung in vungs:
         for request in requests:
-            if (vung == "center") and (request==10):continue
-           
             for i in i_s:
-                if (vung == "center") and (request==20) and (i in [2, 1, 0]) :continue
                 name_folder = mien+"_"+vung+"_"+str(i)
 
                 network = Network("./code/dataset/" + name_folder + "/input.txt")

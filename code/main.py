@@ -13,7 +13,7 @@ miens = ["conus"]#["cogent", "nsf" ,
 
 vungs = ["urban"]
 
-requests = [10, 20, 30]
+requests = [10]
 
 TIMELIMIT = 600
 

@@ -156,13 +156,13 @@ class NSGA2:
         self.expulsion_set = tmp_expulsion
     
     def print_gen(self, gen):
+
         with open(self.path_output, 'a') as file:
             # Ghi các lời gọi print vào file
-            print("Gen: {}".format(gen + 1), file=file)
-            for sol in self.rank[0]:
-                print("     id:{} |Total fit:{} |fitness:{}".format(sol, sum(self.fitness[sol]), self.fitness[sol]), file=file)
-            print("", file=file)
-
+            print("Gen: {}".format(gen), file=file)
+            for good_fitness in self.rank[0]:
+                print("{}".format(self.fitness[good_fitness]), file=file)
+            print("", file=file)  # In một dòng trống
 
     def _chooce_on_crowding_distance(self, rank_chooce, num_expulsion):
         expulsion = []

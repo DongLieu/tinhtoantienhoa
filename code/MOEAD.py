@@ -64,8 +64,8 @@ class MOEAD:
                 
                 with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
-                    print("Gen:new {}".format(gen), file=file)
-                    print("     continue len = {}".format(len(new_sols)), file=file)
+                    print("Gen: {}".format(gen), file=file)
+                    print("     continue gen ", file=file)
                     print("", file=file)
 
                 current_time = time.time()  # Lấy thời gian hiện tại
@@ -79,8 +79,7 @@ class MOEAD:
                     sol_neis = self.B[rand_sol]
                     for sol_nei in sol_neis:
                         self.new_sol_is_good_to_update(sol_nei, new_sol)
-                self.print_the_result_in_generation(gen)
-            
+                self.print_gen(gen)
             
     def initialization_weight(self):
         w = []
@@ -182,14 +181,12 @@ class MOEAD:
             self.fitness[sol_id] = result
             self.pop[sol_id] = sol_new
 
-    def print_the_result_in_generation(self, gen):
+    def print_gen(self, gen):
         with open(self.path_output, 'a') as file:
                 # Ghi các lời gọi print vào file
                 print("Gen: {}".format(gen), file=file)
                 for sol_id in range(self.n_pop):
-                    # weights = self.weight[sol_id]
-                    # rounded_weights = [round(w, 5) for w in weights]
-                    print("     id: {}| fitness:{} | w: {}".format(sol_id,self.fitness[sol_id], self.weight[sol_id]), file=file)
+                    print("{}".format(self._obj_func(self.pop[sol_id])), file=file)
                 print("", file=file)
 
         return

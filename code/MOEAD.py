@@ -9,14 +9,14 @@ from graph_sfc_set import *
 from Solution import *
 
 class MOEAD:
-    def __init__(self, N, Gen, timelimit, sol_mau:Solution) -> None:
+    def __init__(self, N, Gen, timelimit, K, sol_mau:Solution) -> None:
         self.path_output = sol_mau.name_folder_output + "_MOEAD.txt"
         self.network = sol_mau.net
         self.sfc_set = sol_mau.sfcs 
         
         self.n_pop = N
         self.Gen = Gen
-        self.num_nei = 3
+        self.num_nei = K
         self.CR = 0.8
         self.time = timelimit
 
@@ -26,6 +26,9 @@ class MOEAD:
         self.pop = []
         self.fitness = []
         self.z = [1, 1, 1]
+
+        # thu nghiem:
+        self.path_output = sol_mau.name_folder_output + "_MOEAD.txt"
 
      # Ham muc tieu:
     def _obj_func(self,sol: Solution):

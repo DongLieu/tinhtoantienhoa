@@ -37,24 +37,28 @@ for mien in miens:
                 N_POP_MOTLBO = 100
                 GEN_MOTLBO = 1000
                 NUM_REMOVE_MOTLBO = 20
+                RATE_CROSS_MOTLBO = 0.8
 
-                motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, TIMELIMIT, NUM_REMOVE_MOTLBO, sol_mau)
+                motlbo = MOTLBO(N_POP_MOTLBO, GEN_MOTLBO, TIMELIMIT, NUM_REMOVE_MOTLBO, RATE_CROSS_MOTLBO, sol_mau)
                 motlbo.run()
 
                 # ############################-MOEAD-##############################
                 N_POP_MOEAD = 20
 
                 GEN_MOEAD = 1000
+                K = 3
 
-                moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, sol_mau)
+                moead = MOEAD(N_POP_MOEAD, GEN_MOEAD, TIMELIMIT, K, sol_mau)
                 moead.run()
 
                 # # ############################-NSGA2-##################################
                 N_POP_NSGA2 = 50
                 GEN_NSGA2 = 50
                 NUM_REMOVE_NSGA2 = 10
+                RATE_CROSS_NSGA2 = 0.8
+                RATE_MUTAION_NSGA2 = 0.1
 
-                nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, sol_mau)
+                nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, RATE_CROSS_NSGA2, RATE_MUTAION_NSGA2, sol_mau)
                 nsga2.run()
 
                 # ##########################-ISO-##################################

@@ -8,14 +8,14 @@ from graph_sfc_set import *
 
 from Solution import *
 class MOTLBO:
-    def __init__(self, N, Gen, time, num_remove, sol_mau:Solution) -> None:
-        self.path_output = sol_mau.name_folder_output + "_MOTLBO.txt"
+    def __init__(self, N, Gen, time, num_remove, rate_cross, sol_mau:Solution) -> None:
         self.network = sol_mau.net
         self.sfc_set = sol_mau.sfcs 
 
         self.n_pop = N
         self.Gen = Gen
         self.num_remove = num_remove
+        self.rate_cross = rate_cross
         self.time = time
 
         self.pop = []
@@ -27,7 +27,9 @@ class MOTLBO:
         self.need_improve = []
         self.dominant_set = []
         self.expulsion_set = []
-
+        
+        # self.path_output = sol_mau.name_folder_output + str(num_remove) + "_rm_MOTLBO.txt"
+        self.path_output = sol_mau.name_folder_output + "_MOTLBO.txt"
     def run(self):
         with open(self.path_output, 'w') as file:
             file.truncate(0)

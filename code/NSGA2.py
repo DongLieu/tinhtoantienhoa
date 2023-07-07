@@ -10,7 +10,7 @@ from graph_sfc_set import *
 from Solution import *
 
 class NSGA2:
-    def __init__(self, N, Gen, timelimit, num_remove, sol_mau:Solution) -> None:
+    def __init__(self, N, Gen, timelimit, num_remove, rate_cross, rate_mutation, sol_mau:Solution) -> None:
         self.path_output = sol_mau.name_folder_output + "_NSGA2.txt"
         self.network = sol_mau.net
         self.sfc_set = sol_mau.sfcs 
@@ -19,11 +19,16 @@ class NSGA2:
         self.Gen = Gen
         self.num_remove = num_remove
         self.time = timelimit
+        self.rate_cross = rate_cross
+        self.rate_mutation = rate_mutation
 
         self.pop = []
         self.fitness = []
         self.rank = dict()
         self.expulsion_set = []
+
+        # thu nghiem:
+        # self.path_output = sol_mau.name_folder_output + "_NSGA2.txt"
 
      # Ham muc tieu:
     def _obj_func(self,sol: Solution):

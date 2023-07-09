@@ -28,7 +28,7 @@ class MOEAD:
         self.z = [1, 1, 1]
 
         # thu nghiem:
-        self.path_output = sol_mau.name_folder_output + "_MOEAD.txt"
+        # self.path_output = sol_mau.name_folder_output + str(N) +"_MOEAD.txt"
 
      # Ham muc tieu:
     def _obj_func(self,sol: Solution):

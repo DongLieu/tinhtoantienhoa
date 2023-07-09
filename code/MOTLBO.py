@@ -28,8 +28,8 @@ class MOTLBO:
         self.dominant_set = []
         self.expulsion_set = []
         
-        # self.path_output = sol_mau.name_folder_output + str(num_remove) + "_rm_MOTLBO.txt"
-        self.path_output = sol_mau.name_folder_output + "_MOTLBO.txt"
+        self.path_output = sol_mau.name_folder_output + str(rate_cross) + "_rate_MOTLBO.txt"
+        # self.path_output = sol_mau.name_folder_output + "_MOTLBO.txt"
     def run(self):
         with open(self.path_output, 'w') as file:
             file.truncate(0)
@@ -202,8 +202,8 @@ class MOTLBO:
                     stu1 = self.pop[student1]
                     stu2 = self.pop[student2]
 
-                    r = np.random.rand()
-                    if r > 0.5:
+                    r = random.random()
+                    if r < self.rate_cross:
                         stu_new, success = self._teacher_teaching_student(stu1, stu2)
                         if success:
                             if self._sol_in_pop(stu_new):

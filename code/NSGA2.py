@@ -11,7 +11,7 @@ from Solution import *
 
 class NSGA2:
     def __init__(self, N, Gen, timelimit, num_remove, rate_cross, rate_mutation, sol_mau:Solution) -> None:
-        self.path_output = sol_mau.name_folder_output + "_NSGA2.txt"
+        # self.path_output = sol_mau.name_folder_output + "_NSGA2.txt"
         self.network = sol_mau.net
         self.sfc_set = sol_mau.sfcs 
 
@@ -28,7 +28,7 @@ class NSGA2:
         self.expulsion_set = []
 
         # thu nghiem:
-        # self.path_output = sol_mau.name_folder_output + "_NSGA2.txt"
+        self.path_output = sol_mau.name_folder_output + str(rate_cross) + "_m_rate_NSGA2.txt"
 
      # Ham muc tieu:
     def _obj_func(self,sol: Solution):
@@ -230,9 +230,11 @@ class NSGA2:
             for dad2 in range(self.n_pop):
                 if dad2 in self.expulsion_set:continue
                 if dad2 in dad_used:continue
-                sols_new, ok = self._laighep(dad1, dad2)
-                if ok:
-                    childs_tmp = childs_tmp + sols_new
+                rand = random.random()
+                if rand < self.rate_cross:
+                    sols_new, ok = self._laighep(dad1, dad2)
+                    if ok:
+                        childs_tmp = childs_tmp + sols_new
         
         if len(childs_tmp) > self.num_remove:
             for i in range(self.num_remove - 10):

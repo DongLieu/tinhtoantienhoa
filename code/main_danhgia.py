@@ -1,7 +1,7 @@
 from MOTLBO import *
 from MOEAD import *
 from NSGA2 import *
-from ISO import *
+
 
 from graph_network import *
 from graph_sfc_set import *

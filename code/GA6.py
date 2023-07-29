@@ -1,6 +1,5 @@
 import copy
 from typing import List, Tuple
-import math
 import time
 
 from graph_network import *
@@ -8,11 +7,12 @@ from graph_sfc_set import *
 
 from Solution import *
 
-class ISO:
-    def __init__(self, N, Gen, timelimit, num_remove, sol_mau:Solution) -> None:
-        self.path_output = sol_mau.name_folder_output + "_ISO.txt"
+class GA6:
+    def __init__(self, N, Gen, timelimit,w, num_remove, sol_mau:Solution) -> None:
+        self.path_output = sol_mau.name_folder_output + "_Ga"+str(w[0])+".txt"
         self.network = sol_mau.net
         self.sfc_set = sol_mau.sfcs 
+        self.w = w[1:]
 
         self.n_pop = N
         self.Gen = Gen
@@ -60,7 +60,18 @@ class ISO:
             elapsed_time = current_time - start_time  # Tính thời gian đã trôi qua
             if elapsed_time >= self.time:  # Kiểm tra nếu đã đạt đến thời gian kết thúc (ví dụ: 600 giây - 10 phút)
                 break  # Thoát khỏi vòng lặp
-    
+            
+            if self.khongthaydoi():
+                break
+    def khongthaydoi(self):
+        khacnhaukhong = 0
+        for sol1 in self.top_fitness:
+            for sol2 in self.top_fitness:
+                if self._obj_func(self.pop[sol1]) != self._obj_func(self.pop[sol2]):
+                    print("k bang")
+                    return False
+        return True
+
     # Hàm tạo quần thể ban đầu
     def initialize_population(self):
         while(len(self.pop) != self.n_pop):
@@ -85,7 +96,8 @@ class ISO:
     def evaluate_population(self):
         fitniss_tmp = []
         for solution in range(self.n_pop):
-            fitniss_sol =  sum(self._obj_func(self.pop[solution]))
+            fit = self._obj_func(self.pop[solution])
+            fitniss_sol = sum(fit[i]*self.w[i] for i in range(3))
             fitniss_tmp.append([solution, fitniss_sol])
         self.fitness = fitniss_tmp
 

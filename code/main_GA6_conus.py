@@ -8,7 +8,7 @@ from graph_sfc_set import *
 from Solution import *
 
 miens = [ "conus"]
-vungs = ["rural", "uniform", "urban"]#"center"ok
+vungs = ["center"]#"center"ok
 
 requests = [10, 20, 30]
 

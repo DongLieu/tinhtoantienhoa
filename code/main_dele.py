@@ -2,7 +2,7 @@
 from MOTLBO import *
 from MOEAD import *
 from NSGA2 import *
-from ISO import *
+
 
 from graph_network import *
 from graph_sfc_set import *
@@ -61,10 +61,4 @@ for mien in miens:
                 # nsga2 = NSGA2(N_POP_NSGA2, GEN_NSGA2, TIMELIMIT, NUM_REMOVE_NSGA2, RATE_CROSS_NSGA2, RATE_MUTAION_NSGA2, sol_mau)
                 # nsga2.run()
 
-                # # ##########################-ISO-##################################
-                # N_POP_ISO = 100
-                # GEN_ISO = 1000
-                # NUM_REMOVE_ISO = 40
 
-                # iso = ISO(N_POP_ISO, GEN_ISO, TIMELIMIT, NUM_REMOVE_ISO, sol_mau)
-                # iso.run()

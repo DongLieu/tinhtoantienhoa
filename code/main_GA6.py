@@ -7,14 +7,15 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["nsf"]
-vungs = [ "rural"]
-# rural4-30
-requests = [30]
+miens = ["nsf","conus","cogent"]
 
-TIMELIMIT = 600
+vungs = ["center","rural", "uniform", "urban"]
 
-i_s = [0,1,2, 3, 4]
+requests = [10, 20, 30]
+
+TIMELIMIT = 300
+
+i_s = [ 0, 1, 2, 3, 4]
 
 weights = [
     [1, 0, 0],

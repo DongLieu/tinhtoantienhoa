@@ -1,5 +1,5 @@
 
-# C:\Users\DongTramCam\Desktop\tinhtoantienhoa\code\output
+# File này dùng để convert lại file output của thuật toán GA-6 để đưa vào folder pareto 
 input_f = "./code/output"
 output_f = "./code/danhgia/pareto"
 
@@ -9,7 +9,7 @@ mien = ["center", "rural", "uniform", "urban"]
 
 id = ["0", "1", "2", "3", "4"]
 
-# C:\Users\DongTramCam\Desktop\tinhtoantienhoa\code\output\cogent_center_0\
+
 name_file = [
             "request10_Ga1.txt", "request10_Ga2.txt", "request10_Ga3.txt", "request10_Ga4.txt", "request10_Ga5.txt", "request10_Ga6.txt",\
             "request20_Ga1.txt", "request20_Ga2.txt", "request20_Ga3.txt", "request20_Ga4.txt", "request20_Ga5.txt", "request20_Ga6.txt",\

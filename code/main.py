@@ -9,15 +9,15 @@ from graph_sfc_set import *
 
 from Solution import *
 
-miens = ["conus"]#["cogent", "nsf" ,
+miens = ["nsf","conus","cogent"]
 
-vungs = ["urban"]
+vungs = ["center","rural", "uniform", "urban"]
 
-requests = [10]
+requests = [10, 20, 30]
 
-TIMELIMIT = 600
+TIMELIMIT = 300
 
-i_s = [2, 1, 0, 3, 4]
+i_s = [ 0, 1, 2, 3, 4]
 
 for mien in miens:
     for vung in vungs:

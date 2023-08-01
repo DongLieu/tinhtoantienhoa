@@ -1,5 +1,5 @@
 
-# C:\Users\DongTramCam\Desktop\tinhtoantienhoa\code\output
+# File này dùng để convert lại file output của thuật toán MOTLBO, NSGA-II, MOEA/D để đưa vào folder pareto 
 input_f = "./code/output"
 output_f = "./code/danhgia/pareto"
 
@@ -9,7 +9,6 @@ mien = ["center", "rural", "uniform", "urban"]
 
 id = ["0", "1", "2", "3", "4"]
 
-# C:\Users\DongTramCam\Desktop\tinhtoantienhoa\code\output\cogent_center_0\
 name_file = ["request10_MOTLBO.txt", "request10_NSGA2.txt", "request10_MOEAD.txt",\
               "request20_MOTLBO.txt", "request20_NSGA2.txt", "request20_MOEAD.txt",  \
                 "request30_MOTLBO.txt", "request30_NSGA2.txt", "request30_MOEAD.txt",]
